@@ -187,20 +187,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="企业级项目开发流程"><a href="#企业级项目开发流程" class="headerlink" title="企业级项目开发流程"></a>企业级项目开发流程</h1><p>工作中对项目的整个开发流程应该要有一个宏观的流程认识，我个人对项目开发流程的理解为以下几点：</p>
-<ol>
-<li>项目调研</li>
-<li>需求分析</li>
-<li>方案设计</li>
-<li>功能开发</li>
-<li>测试</li>
-<li>部署</li>
-<li>后期维护（包括再开发，运维等）<h2 id="项目调研"><a href="#项目调研" class="headerlink" title="项目调研"></a>项目调研</h2>在这个环节，其实公司不会在乎具体的实现，只在乎他们要干什么，什么能赚钱，什么有前景，一般是不会需要像我们这样的码农参与其中的，一般都是产品经理，项目经理这样的参加会议，指定方向，目标。<h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2>在这个环节中，会有用户的参与，用户会开始提出显式的需求，在这边像我们公司会有BI参与其中，开始写需求，明确要做什么，做成什么样子，当然在过程中用户的需求是显式的，还有很多隐式需求，需要BI与Dev讨论并写入需求分析中<h2 id="方案设计"><a href="#方案设计" class="headerlink" title="方案设计"></a>方案设计</h2>这里架构师就该跳出来干活了，概念设计，详细设计，系统设计等等，就是将项目的骨架搭建完成，当然理想状态就是把详细设计做到极致，这样后面的功能开发就跟做填空题一样，开发可以很轻松并且快速的完成任务，当时食物的两面性，详设如果做的太完美，不利于码农的发展哦，哈哈！！<h2 id="功能开发"><a href="#功能开发" class="headerlink" title="功能开发"></a>功能开发</h2>想必大部分码农，都是在这里干活滴，从理论上来说码农只是做做填空题，就是在架构下完成需求，抱住BI的大腿，看懂需求文档，照着架子填进去就完事儿了，但是往往很多公司是不具备完整详设的，所以坑会很多，当然根据实物的两面性，你成长的也会更快哦！写完功能，想要往下走，一般公司都会要求开发做，单元测试，单元测试通过率等等这类的，这些都是开发码农应尽的责任与义务。<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2>测试一般而言会根据业务的不同，会有以下的几大类测试方向：</li>
-<li>功能</li>
-<li>联调</li>
-<li>性能<br><br>笔者的公司是做金融系统的，所以功能测试（会不会导致交易出错）是头等大事，再者就是联调（各个模块间传输是否会出错），对性能的要求并不是特别高，故抗压测试为最小头。相信很多互联网公司可能测试的重点就不一样了吧。这里就不展开并发这类的什么问题了，这个讲讲几篇blog都不够聊的。反正测试的工作就是找bug，找bug~~<h2 id="部署上线"><a href="#部署上线" class="headerlink" title="部署上线"></a>部署上线</h2>一般一个新项目上面的步骤都走完以后都会有试运行的阶段，时间长短不一（具体领导说了算），就是为了测试稳定性，通过以后会正式上线<br><br><strong>好了至此一个项目完成了？</strong><br>==当然不是，这样的话运维不是失业啦==<h2 id="后期"><a href="#后期" class="headerlink" title="后期"></a>后期</h2>运维上线，保证产品稳定，开发再开发新功能，bug修复等等一个新的轮回开始。</li>
-</ol>
-
+        <h1 id="企业级项目开发流程"><a href="#企业级项目开发流程" class="headerlink" title="企业级项目开发流程"></a>企业级项目开发流程</h1>
+        
+          <a class="article-more-a" href="/2019/03/24/项目开发流程/#more">more >></a>
+        
       
 
       
@@ -284,28 +274,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Hexo安装教程，以及排坑过程"><a href="#Hexo安装教程，以及排坑过程" class="headerlink" title="Hexo安装教程，以及排坑过程"></a>Hexo安装教程，以及排坑过程</h1><h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><ol>
-<li>git安装，以及注册github</li>
-<li>nodejs，npm安装</li>
-<li>hexo安装<h2 id="使用过程"><a href="#使用过程" class="headerlink" title="使用过程"></a>使用过程</h2></li>
-<li>本地初始化hexo</li>
-<li>利用git Bash工具，将本地代码与github同步，并部署到github上</li>
-<li>上传新的blog，开启blog之旅吧<h3 id="注册github，以及git安装"><a href="#注册github，以及git安装" class="headerlink" title="注册github，以及git安装"></a>注册github，以及git安装</h3>注册github都不多说了，不会的，我也没有办法了，自行百度吧！作为一个程序猿git的安装我也不多叙述！！！<h3 id="github设置"><a href="#github设置" class="headerlink" title="github设置"></a>github设置</h3>有了github帐号，点击左上角图标<br><img src="/images/clipboard00.png" alt><br>选择new<br><img src="/images/clipboard1.png" alt><br>然后<br><img src="/images/clipboard2.png" alt><br>点击Create repository<br><br>这个为我们在Github上的个人blog的repository就建完了<h3 id="SSH-Key"><a href="#SSH-Key" class="headerlink" title="SSH Key"></a>SSH Key</h3>这个在这里也不多介绍了，使用git必备，网上教程很多，自行百度吧<br><br><strong>至此git以及gitHub的前期准备工作就完成了</strong><h3 id="nodejs，npm安装"><a href="#nodejs，npm安装" class="headerlink" title="nodejs，npm安装"></a>nodejs，npm安装</h3>如何安装就不说了，<a href="https://nodejs.org/en/" target="_blank" rel="noopener">去nodejs官网</a>下载，然后安装，然后最好设置一下环境变量，最后用git Bash试一下<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">node</span> <span class="title">-v</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">npm</span> -v</span><br></pre></td></tr></table></figure>
-<p>确定已经安装成功</p>
-<h3 id="hexo安装"><a href="#hexo安装" class="headerlink" title="hexo安装"></a>hexo安装</h3><p>上一步中npm已经安装成功，所以直接用npm去安装hexo吧，这里坑挺多的，安装的时候务必注意哦！选择一个文件夹比如Hexo，在该文件夹下Git Bash</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-<span class="keyword">cli</span> -g</span><br></pre></td></tr></table></figure>
-<p>以上在git Bash上个是没错的，但是如果很久没有反应是正常的，原因么，大家懂的，怎么办呢？结束上面的代码先然后</p>
-<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">$</span> npm config <span class="keyword">set</span> registry <span class="comment">https:</span>//<span class="comment">registry.npm.taobao.org</span></span><br></pre></td></tr></table></figure>
-<p>以上代码修改npm的安装源，选择了淘宝的NPM，这个npm是可以代替官方版本的，所以大家放心使用，再然后</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-<span class="keyword">cli</span> -g      <span class="meta">#安装淘宝源上的hexo</span></span><br></pre></td></tr></table></figure>
-<h3 id="本地初始化hexo"><a href="#本地初始化hexo" class="headerlink" title="本地初始化hexo"></a>本地初始化hexo</h3><p>继续在git  Bash上操作<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>hexo init                             <span class="comment">#初始化hexo</span></span><br><span class="line"><span class="variable">$ </span>npm install                           <span class="comment">#安装npm</span></span><br><span class="line"><span class="variable">$ </span>npm install --save hexo-deployer-git <span class="comment">#部署插件</span></span><br></pre></td></tr></table></figure></p>
-<p>修改hexo根目录下的_config.yml文件<br><br>具体怎么改这里就不详细描述了，能看的上面的注释，基本也会改了！<br><br>特别提一下yml里面有个<br><br>deploy:<br><br>  type: git<br><br>  repository:<br><br>  branch:master<br><br>  repository这个要改成最上面git上建立的repository的地址哦 ，不知道的去github的setting里找到！<br><strong>至此hexo在本地就搭建完成了</strong></p>
-<h3 id="利用git-Bash工具，将本地代码与github同步，并部署到github上"><a href="#利用git-Bash工具，将本地代码与github同步，并部署到github上" class="headerlink" title="利用git Bash工具，将本地代码与github同步，并部署到github上"></a>利用git Bash工具，将本地代码与github同步，并部署到github上</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>hexo clean    <span class="comment">#清一下上次生成的</span></span><br><span class="line"><span class="variable">$ </span>hexo g        <span class="comment">#本地生成文件</span></span><br><span class="line"><span class="variable">$ </span>hexo d        <span class="comment">#上传并部署到github</span></span><br></pre></td></tr></table></figure>
-<h3 id="上传新的blog，开启blog之旅吧"><a href="#上传新的blog，开启blog之旅吧" class="headerlink" title="上传新的blog，开启blog之旅吧"></a>上传新的blog，开启blog之旅吧</h3><p>按照上面的一步步下去，hexo的搭建就基本完成了，要上传自己 的blog，以及如何美化blog，笔者有些个人觉得还可以的法子，后面介绍吧！</p>
-
+        <h1 id="Hexo安装教程，以及排坑过程"><a href="#Hexo安装教程，以及排坑过程" class="headerlink" title="Hexo安装教程，以及排坑过程"></a>Hexo安装教程，以及排坑过程</h1>
+        
+          <a class="article-more-a" href="/2019/03/24/Hexo搭建，开启blog之旅/#more">more >></a>
+        
       
 
       
@@ -551,15 +523,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hive</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
