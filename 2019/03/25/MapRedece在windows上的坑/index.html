@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>超悦の博客</title>
+  <title>MapRedece在windows上的坑 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦の博客">
-<meta property="og:url" content="https://micheal0508.github.io/index.html">
+  <meta name="description" content="说说MapReduce在windows上的坑说起Hadoop那就不得不说MR（MapReduce）了，姑且不说现在实际生产是否可以被Spark完全取代，但是就凭他是Java写的，我就有理由回去温习一下。 就从最基本的ETL开始说吧，众所周知，简单的ETL只需要用到Map的功能就可以实现，所以就写了一个Map，Utils，与Driver（App）三个包，准备清洗一下的一份大概20M左右的一个小文件，">
+<meta name="keywords" content="Hadoop,MapReduce">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MapRedece在windows上的坑">
+<meta property="og:url" content="https://micheal0508.github.io/2019/03/25/MapRedece在windows上的坑/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="说说MapReduce在windows上的坑说起Hadoop那就不得不说MR（MapReduce）了，姑且不说现在实际生产是否可以被Spark完全取代，但是就凭他是Java写的，我就有理由回去温习一下。 就从最基本的ETL开始说吧，众所周知，简单的ETL只需要用到Map的功能就可以实现，所以就写了一个Map，Utils，与Driver（App）三个包，准备清洗一下的一份大概20M左右的一个小文件，">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-25T15:51:44.144Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦の博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="MapRedece在windows上的坑">
+<meta name="twitter:description" content="说说MapReduce在windows上的坑说起Hadoop那就不得不说MR（MapReduce）了，姑且不说现在实际生产是否可以被Spark完全取代，但是就凭他是Java写的，我就有理由回去温习一下。 就从最基本的ETL开始说吧，众所周知，简单的ETL只需要用到Map的功能就可以实现，所以就写了一个Map，Utils，与Driver（App）三个包，准备清洗一下的一份大概20M左右的一个小文件，">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
   
@@ -165,16 +167,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-MapRedece在windows上的坑" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-MapRedece在windows上的坑" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/25/MapRedece在windows上的坑/">MapRedece在windows上的坑</a>
+    <h1 class="article-title" itemprop="name">
+      MapRedece在windows上的坑
     </h1>
   
 
@@ -236,16 +236,75 @@
 
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/25/MapRedece在windows上的坑/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/03/25/MapRedece在windows上的坑/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2019/03/24/项目开发流程/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">项目开发流程</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -260,292 +319,32 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-项目开发流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/24/项目开发流程/">项目开发流程</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/24/项目开发流程/" class="archive-article-date">
-  	<time datetime="2019-03-23T22:55:18.149Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="企业级项目开发流程"><a href="#企业级项目开发流程" class="headerlink" title="企业级项目开发流程"></a>企业级项目开发流程</h1><p>工作中对项目的整个开发流程应该要有一个宏观的流程认识，我个人对项目开发流程的理解为以下几点：</p>
-<ul>
-<li>项目调研</li>
-<li>需求分析</li>
-<li>方案设计</li>
-<li>功能开发</li>
-<li>测试</li>
-<li>部署</li>
-<li>后期维护（包括再开发，运维等）</li>
-</ul>
-        
-          <a class="article-more-a" href="/2019/03/24/项目开发流程/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/24/项目开发流程/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#说说MapReduce在windows上的坑"><span class="toc-number">1.</span> <span class="toc-text">说说MapReduce在windows上的坑</span></a></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
   
-    <article id="post-Hexo搭建，开启blog之旅" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/24/Hexo搭建，开启blog之旅/">Hexo搭建，开启blog之旅</a>
-    </h1>
   
 
-        
-        <a href="/2019/03/24/Hexo搭建，开启blog之旅/" class="archive-article-date">
-  	<time datetime="2019-03-23T19:43:45.519Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="Hexo安装教程，以及排坑过程"><a href="#Hexo安装教程，以及排坑过程" class="headerlink" title="Hexo安装教程，以及排坑过程"></a>Hexo安装教程，以及排坑过程</h1><h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><ul>
-<li>git安装，以及注册github</li>
-<li>nodejs，npm安装</li>
-<li>hexo安装<h2 id="使用过程"><a href="#使用过程" class="headerlink" title="使用过程"></a>使用过程</h2></li>
-<li>本地初始化hexo</li>
-<li>利用git Bash工具，将本地代码与github同步，并部署到github上</li>
-<li>上传新的blog，开启blog之旅吧</li>
-</ul>
-        
-          <a class="article-more-a" href="/2019/03/24/Hexo搭建，开启blog之旅/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/24/Hexo搭建，开启blog之旅/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-HIVE实战" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/22/HIVE实战/">开发</a>
-    </h1>
   
 
-        
-        <a href="/2019/03/22/HIVE实战/" class="archive-article-date">
-  	<time datetime="2019-03-22T09:33:43.236Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这是我第一次写Blog~~~~</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hive</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/22/HIVE实战/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
+
   
 
 
@@ -568,8 +367,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

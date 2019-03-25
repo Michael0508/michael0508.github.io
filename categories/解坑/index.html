@@ -6,12 +6,12 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>超悦の博客</title>
+  <title>Category: 解坑 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="记录与分享生产学习中的问题">
 <meta property="og:type" content="website">
 <meta property="og:title" content="超悦の博客">
-<meta property="og:url" content="https://micheal0508.github.io/index.html">
+<meta property="og:url" content="https://micheal0508.github.io/categories/解坑/index.html">
 <meta property="og:site_name" content="超悦の博客">
 <meta property="og:description" content="记录与分享生产学习中的问题">
 <meta property="og:locale" content="zh-Hans">
@@ -167,46 +167,34 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-MapRedece在windows上的坑" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
     
-      <header class="article-header">
-        
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2019" class="archive-year">2019</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2019/03/25/MapRedece在windows上的坑/" class="archive-article-date">
+  	<time datetime="2019-03-25T07:49:53.391Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-25</time>
+</a>
+        </div>
+    	 
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/25/MapRedece在windows上的坑/">MapRedece在windows上的坑</a>
+      <a class="archive-article-title" href="/2019/03/25/MapRedece在windows上的坑/">MapRedece在windows上的坑</a>
     </h1>
   
 
-        
-        <a href="/2019/03/25/MapRedece在windows上的坑/" class="archive-article-date">
-  	<time datetime="2019-03-25T07:49:53.391Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="说说MapReduce在windows上的坑"><a href="#说说MapReduce在windows上的坑" class="headerlink" title="说说MapReduce在windows上的坑"></a>说说MapReduce在windows上的坑</h2><p>说起Hadoop那就不得不说MR（MapReduce）了，姑且不说现在实际生产是否可以被Spark完全取代，但是就凭他是Java写的，我就有理由回去温习一下。<br></p>
-<p>就从最基本的ETL开始说吧，众所周知，简单的ETL只需要用到Map的功能就可以实现，所以就写了一个Map，Utils，与Driver（App）三个包，准备清洗一下的一份大概20M左右的一个小文件，作为练习巩固自己已学过的知识之用。<br></p>
-<p>话不多说，上Exception<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread <span class="string">"main"</span> java<span class="selector-class">.lang</span><span class="selector-class">.NullPointerException</span></span><br><span class="line">	at java<span class="selector-class">.lang</span><span class="selector-class">.ProcessBuilder</span><span class="selector-class">.start</span>(ProcessBuilder<span class="selector-class">.java</span>:<span class="number">1012</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.util</span><span class="selector-class">.Shell</span><span class="selector-class">.runCommand</span>(Shell<span class="selector-class">.java</span>:<span class="number">548</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.util</span><span class="selector-class">.Shell</span><span class="selector-class">.run</span>(Shell<span class="selector-class">.java</span>:<span class="number">507</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.util</span><span class="selector-class">.Shell</span><span class="variable">$ShellCommandExecutor</span>.execute(Shell<span class="selector-class">.java</span>:<span class="number">789</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.util</span><span class="selector-class">.Shell</span><span class="selector-class">.execCommand</span>(Shell<span class="selector-class">.java</span>:<span class="number">882</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.util</span><span class="selector-class">.Shell</span><span class="selector-class">.execCommand</span>(Shell<span class="selector-class">.java</span>:<span class="number">865</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.fs</span><span class="selector-class">.FileUtil</span><span class="selector-class">.execCommand</span>(FileUtil<span class="selector-class">.java</span>:<span class="number">1111</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.fs</span><span class="selector-class">.RawLocalFileSystem</span><span class="variable">$DeprecatedRawLocalFileStatus</span>.loadPermissionInfo(RawLocalFileSystem<span class="selector-class">.java</span>:<span class="number">646</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.fs</span><span class="selector-class">.RawLocalFileSystem</span><span class="variable">$DeprecatedRawLocalFileStatus</span>.getPermission(RawLocalFileSystem<span class="selector-class">.java</span>:<span class="number">621</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.fs</span><span class="selector-class">.LocatedFileStatus</span>.&lt;init&gt;(LocatedFileStatus<span class="selector-class">.java</span>:<span class="number">47</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.fs</span><span class="selector-class">.FileSystem</span>$<span class="number">4</span>.next(FileSystem<span class="selector-class">.java</span>:<span class="number">1791</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.fs</span><span class="selector-class">.FileSystem</span>$<span class="number">4</span>.next(FileSystem<span class="selector-class">.java</span>:<span class="number">1771</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.lib</span><span class="selector-class">.input</span><span class="selector-class">.FileInputFormat</span><span class="selector-class">.singleThreadedListStatus</span>(FileInputFormat<span class="selector-class">.java</span>:<span class="number">305</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.lib</span><span class="selector-class">.input</span><span class="selector-class">.FileInputFormat</span><span class="selector-class">.listStatus</span>(FileInputFormat<span class="selector-class">.java</span>:<span class="number">265</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.lib</span><span class="selector-class">.input</span><span class="selector-class">.FileInputFormat</span><span class="selector-class">.getSplits</span>(FileInputFormat<span class="selector-class">.java</span>:<span class="number">387</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.JobSubmitter</span><span class="selector-class">.writeNewSplits</span>(JobSubmitter<span class="selector-class">.java</span>:<span class="number">305</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.JobSubmitter</span><span class="selector-class">.writeSplits</span>(JobSubmitter<span class="selector-class">.java</span>:<span class="number">322</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.JobSubmitter</span><span class="selector-class">.submitJobInternal</span>(JobSubmitter<span class="selector-class">.java</span>:<span class="number">200</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.Job</span>$<span class="number">10</span>.run(Job<span class="selector-class">.java</span>:<span class="number">1307</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.Job</span>$<span class="number">10</span>.run(Job<span class="selector-class">.java</span>:<span class="number">1304</span>)</span><br><span class="line">	at java<span class="selector-class">.security</span><span class="selector-class">.AccessController</span><span class="selector-class">.doPrivileged</span>(Native Method)</span><br><span class="line">	at javax<span class="selector-class">.security</span><span class="selector-class">.auth</span><span class="selector-class">.Subject</span><span class="selector-class">.doAs</span>(Subject<span class="selector-class">.java</span>:<span class="number">422</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.security</span><span class="selector-class">.UserGroupInformation</span><span class="selector-class">.doAs</span>(UserGroupInformation<span class="selector-class">.java</span>:<span class="number">1924</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.Job</span><span class="selector-class">.submit</span>(Job<span class="selector-class">.java</span>:<span class="number">1304</span>)</span><br><span class="line">	at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.Job</span><span class="selector-class">.waitForCompletion</span>(Job<span class="selector-class">.java</span>:<span class="number">1325</span>)</span><br><span class="line">	at com<span class="selector-class">.ruozedata</span><span class="selector-class">.driver</span><span class="selector-class">.LogETLDriver</span><span class="selector-class">.main</span>(LogETLDriver<span class="selector-class">.java</span>:<span class="number">46</span>)</span><br></pre></td></tr></table></figure></p>
-<p>一脸懵逼的报错是吧，开始检查代码，得出结论代码没错，思考加排错了大概10分钟左右，没辙了百度大法，得到的结论是要在windows本地必须有一个hadoop/bin的目录，并且往这个目录当中添加一个winutils.exe的执行文件，我始终无法理解这是个什么原因，然后想我们生产中肯定会将项目打包放去Linux系统这个错，应该只会在windows10本地跑的时候才会发生，以前用mac的时候也没有出现过这个问题呀，从报错的日志来看应该是hadoop框架会去跑shell的命令，但是windows上缺失，所以NullPointerException了。<br></p>
-<p>最后经过笔者反复尝试得出解决方案：</p>
-<ul>
-<li>在本地如D盘创建一个hadoop/bin的目录（只需要是空的目录就可以了）</li>
-<li>将对应hadoop版本的winutils.exe放进hadoop/bin目录下</li>
-<li>在Driver（App）的main方式中添加一行代码：<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">System</span><span class="selector-class">.setProperty</span>("<span class="selector-tag">hadoop</span><span class="selector-class">.home</span><span class="selector-class">.dir</span>", "<span class="selector-tag">D</span>:\\<span class="selector-tag">hadoop</span>");</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>三步算是较为完美的解决了windows10上使用hadoop的MR的一个大坑，如果小伙伴们有更好的解决方案，欢迎探讨！</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -222,7 +210,7 @@
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -235,318 +223,17 @@
 	</div>
 
 
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/25/MapRedece在windows上的坑/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
-    <article id="post-项目开发流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
+    </div></section>
+  
+
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/24/项目开发流程/">项目开发流程</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/24/项目开发流程/" class="archive-article-date">
-  	<time datetime="2019-03-23T22:55:18.149Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="企业级项目开发流程"><a href="#企业级项目开发流程" class="headerlink" title="企业级项目开发流程"></a>企业级项目开发流程</h1><p>工作中对项目的整个开发流程应该要有一个宏观的流程认识，我个人对项目开发流程的理解为以下几点：</p>
-<ul>
-<li>项目调研</li>
-<li>需求分析</li>
-<li>方案设计</li>
-<li>功能开发</li>
-<li>测试</li>
-<li>部署</li>
-<li>后期维护（包括再开发，运维等）</li>
-</ul>
-        
-          <a class="article-more-a" href="/2019/03/24/项目开发流程/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/24/项目开发流程/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Hexo搭建，开启blog之旅" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/24/Hexo搭建，开启blog之旅/">Hexo搭建，开启blog之旅</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/24/Hexo搭建，开启blog之旅/" class="archive-article-date">
-  	<time datetime="2019-03-23T19:43:45.519Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="Hexo安装教程，以及排坑过程"><a href="#Hexo安装教程，以及排坑过程" class="headerlink" title="Hexo安装教程，以及排坑过程"></a>Hexo安装教程，以及排坑过程</h1><h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><ul>
-<li>git安装，以及注册github</li>
-<li>nodejs，npm安装</li>
-<li>hexo安装<h2 id="使用过程"><a href="#使用过程" class="headerlink" title="使用过程"></a>使用过程</h2></li>
-<li>本地初始化hexo</li>
-<li>利用git Bash工具，将本地代码与github同步，并部署到github上</li>
-<li>上传新的blog，开启blog之旅吧</li>
-</ul>
-        
-          <a class="article-more-a" href="/2019/03/24/Hexo搭建，开启blog之旅/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/24/Hexo搭建，开启blog之旅/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-HIVE实战" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/22/HIVE实战/">开发</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/22/HIVE实战/" class="archive-article-date">
-  	<time datetime="2019-03-22T09:33:43.236Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这是我第一次写Blog~~~~</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hive</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/22/HIVE实战/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-  
 
 
           </div>
@@ -568,11 +255,11 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
+		isHome: false,
 		isPost: false,
 		isArchive: false,
 		isTag: false,
-		isCategory: false,
+		isCategory: true,
 		open_in_new: true,
 		toc_hide_index: true,
 		root: "/",
