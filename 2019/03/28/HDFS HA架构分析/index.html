@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Category: 教程 | 超悦の博客</title>
+  <title>HDFS HA架构分析 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦の博客">
-<meta property="og:url" content="https://micheal0508.github.io/categories/教程/index.html">
+  <meta name="description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
+<meta name="keywords" content="Hadoop,HDFS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HDFS HA架构分析">
+<meta property="og:url" content="https://micheal0508.github.io/2019/03/28/HDFS HA架构分析/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-28T16:00:47.411Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦の博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="HDFS HA架构分析">
+<meta name="twitter:description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
   
@@ -171,71 +173,188 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-HDFS HA架构分析" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/24/Hexo搭建，开启blog之旅/" class="archive-article-date">
-  	<time datetime="2019-03-23T19:43:45.519Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/24/Hexo搭建，开启blog之旅/">Hexo安装教程，以及排坑过程</a>
+    <h1 class="article-title" itemprop="name">
+      HDFS HA架构分析
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/03/28/HDFS HA架构分析/" class="archive-article-date">
+  	<time datetime="2019-03-28T07:58:14.823Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。<br><a id="more"></a></p>
+<h4 id="HDFS的主要结构"><a href="#HDFS的主要结构" class="headerlink" title="HDFS的主要结构"></a>HDFS的主要结构</h4><p>HDFS是一个主从结构，一个HDFS集群是由一个名字节点，它是一个管理文件命名空间和调节客户端访问文件的主服务器，当然还有一些数据节点，通常是一个节点一个机器，它来管理对应节点的存储。HDFS对外开放文件命名空间并允许用户数据以文件形式存储。</p>
+<p>本文就开始从HDFS的主从结果入手，具体用我自己对HDFS的了解做一个HA（High Available）架构的分析。</p>
+<h4 id="HDFS的伪分布式"><a href="#HDFS的伪分布式" class="headerlink" title="HDFS的伪分布式"></a>HDFS的伪分布式</h4><ul>
+<li>NN（Name Node）名字节点(老大)</li>
+<li>SNN（secondary Name Node） 它不是NN的备份（但可以做备份），它主要工作是帮助NN合并editslog，减少NN启动时间。</li>
+<li>DN （Data Node）数据节点（小弟）<br>基本3个上面进程，就完成了一个伪分布式的HDFS，其中因为只有一台机器SNN可以不启动，完全使用NN-DN的主从结构就可以完成HDFS的最基本的功能，在最开始的学习过程中非常有用，笔者刚接触大数据时，学习以及后面的温故而知新都可以在单机HDFS上完成，但是注意实际生产是不可能用单机的，只能说是自己玩玩可以，后面我们就开始针对实际生产对HDFS做一个全面的剖析！</li>
+</ul>
+<h4 id="生产环境的搭建"><a href="#生产环境的搭建" class="headerlink" title="生产环境的搭建"></a>生产环境的搭建</h4><h6 id="NN："><a href="#NN：" class="headerlink" title="NN："></a>NN：</h6><p>根据伪分布式上NN-DN的主从关系来看，NN如果挂了，这个系统就铁定是挂了（老大挂了，小弟干嘛都不知道了，留着还有什么用），所以在实际生产中，第一会至少会部署2个NN进行工作（1个对外提供服务，另一个保持standby状态，随时准备切换active状态），这样一个挂了，还有个能接着工作，注意2个NN在同一时间只有一个NN是对外工作的。</p>
+<h6 id="命名空间："><a href="#命名空间：" class="headerlink" title="命名空间："></a>命名空间：</h6><p>既然有两个NN，对外服务时，2个NN不确定是哪个NN是工作状态的，我们不能没切换一次NN，我们就去改配置问件，所以引出一个命名空间的概念nameservice，他回去找到真正在对外工作的NN，这个操作client是完全无感知的</p>
+<h6 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h6><p>既然有2个NN那具体是哪个NN是Active哪个是StandBy呢？这里就需要ZooKeeper（顾名思义就是管理着），整个集群中Zookeeper布置的数量一定是2n+1个的，因为NN是哪个Active状态是由ZK选举产生的，既然是选举那必须是奇数个才行，否则同票，就会导致2个NN都处于StandBy状态，这个是生产中不能出现的问题。</p>
+<h6 id="ZK-FailoverController"><a href="#ZK-FailoverController" class="headerlink" title="ZK FailoverController"></a>ZK FailoverController</h6><p>ZKFC这个进程说白了就是测试NN是不是活着的，并将这个消息告知ZK，他一定是跟NN 1：1的，可以与NN配在同一台机器上，也可以不在同一台机器上，他是一个独立的进程（这个要注意与Yarn的ZKFC是不一样的）</p>
+<h6 id="Journal-Node"><a href="#Journal-Node" class="headerlink" title="Journal Node"></a>Journal Node</h6><p>出在两个NN之间，他们存的是edits日志信息，将Active的NN的行为丝毫不差的传达给StandBy的NN，StandBy的NN并不是什么事情都不做，而是重演Active的NN干的事情（假装他做过了），做到Active的NN挂掉的时候Standby的NN可以无缝对接</p>
+<h6 id="Data-Node"><a href="#Data-Node" class="headerlink" title="Data Node"></a>Data Node</h6><p>具体干活的小弟，具体的数据有NN支配，存放在DN中，也是分布在各个机器是的独立进程，跟着NN走，并随时发送心跳给两个NN，告知他们都还活着。</p>
+<p>对该HA架构，结合自己的理解，以及针对官网的描述，做以下的画图（见下图），非常清晰的表现了实际生产中HDFS的框架，大数据中主从架构是非常常见的，后续Yarn的HA架构我再做详细介绍！</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HDFS</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
+        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/03/28/HDFS HA架构分析/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/03/26/结合Shell使用Hive的方式/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">结合Shell使用Hive的方式</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#HDFS的主要结构"><span class="toc-number">1.1.</span> <span class="toc-text">HDFS的主要结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HDFS的伪分布式"><span class="toc-number">1.2.</span> <span class="toc-text">HDFS的伪分布式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#生产环境的搭建"><span class="toc-number">1.3.</span> <span class="toc-text">生产环境的搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#NN："><span class="toc-number">1.3.0.1.</span> <span class="toc-text">NN：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#命名空间："><span class="toc-number">1.3.0.2.</span> <span class="toc-text">命名空间：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ZooKeeper"><span class="toc-number">1.3.0.3.</span> <span class="toc-text">ZooKeeper</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ZK-FailoverController"><span class="toc-number">1.3.0.4.</span> <span class="toc-text">ZK FailoverController</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Journal-Node"><span class="toc-number">1.3.0.5.</span> <span class="toc-text">Journal Node</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Data-Node"><span class="toc-number">1.3.0.6.</span> <span class="toc-text">Data Node</span></a></li></ol></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -258,10 +377,10 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
-		isCategory: true,
+		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
 		root: "/",
