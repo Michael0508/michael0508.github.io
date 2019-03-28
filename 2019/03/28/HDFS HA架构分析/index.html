@@ -16,10 +16,12 @@
 <meta property="og:site_name" content="超悦の博客">
 <meta property="og:description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-28T16:00:47.411Z">
+<meta property="og:image" content="https://micheal0508.github.io/images/1.png">
+<meta property="og:updated_time" content="2019-03-28T16:09:47.377Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HDFS HA架构分析">
 <meta name="twitter:description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/1.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
   
@@ -208,6 +210,7 @@
 <h6 id="Journal-Node"><a href="#Journal-Node" class="headerlink" title="Journal Node"></a>Journal Node</h6><p>出在两个NN之间，他们存的是edits日志信息，将Active的NN的行为丝毫不差的传达给StandBy的NN，StandBy的NN并不是什么事情都不做，而是重演Active的NN干的事情（假装他做过了），做到Active的NN挂掉的时候Standby的NN可以无缝对接</p>
 <h6 id="Data-Node"><a href="#Data-Node" class="headerlink" title="Data Node"></a>Data Node</h6><p>具体干活的小弟，具体的数据有NN支配，存放在DN中，也是分布在各个机器是的独立进程，跟着NN走，并随时发送心跳给两个NN，告知他们都还活着。</p>
 <p>对该HA架构，结合自己的理解，以及针对官网的描述，做以下的画图（见下图），非常清晰的表现了实际生产中HDFS的框架，大数据中主从架构是非常常见的，后续Yarn的HA架构我再做详细介绍！</p>
+<p><img src="/images/1.png" alt></p>
 
       
 
