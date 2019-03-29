@@ -6,18 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Tag: 随笔 | 超悦の博客</title>
+  <title>YARN HA架构分析 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦の博客">
-<meta property="og:url" content="https://micheal0508.github.io/tags/随笔/index.html">
+  <meta name="description" content="打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。">
+<meta name="keywords" content="Hadoop,Yarn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YARN HA架构分析">
+<meta property="og:url" content="https://micheal0508.github.io/2019/03/29/YARN HA架构分析/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://micheal0508.github.io/images/yarn.png">
+<meta property="og:updated_time" content="2019-03-29T19:03:33.689Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦の博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="YARN HA架构分析">
+<meta name="twitter:description" content="打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/yarn.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
   
@@ -171,71 +175,187 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-YARN HA架构分析" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/24/项目开发流程/" class="archive-article-date">
-  	<time datetime="2019-03-23T22:55:18.149Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/24/项目开发流程/">企业级项目开发流程</a>
+    <h1 class="article-title" itemprop="name">
+      YARN HA架构分析
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/03/29/YARN HA架构分析/" class="archive-article-date">
+  	<time datetime="2019-03-29T11:02:29.870Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。</p>
+<a id="more"></a>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>YARN(Yet Another Resource Negotiator),资源协调者,我的理解就是基本大数据的作业都是由这家伙调度的（比如最简单的MR作业，生产上的Spark作业等）他可为上层应用提供统一的资源管理和调度，它的引入为集群在利用率、资源统一管理和数据共享等方面带来了巨大好处。</p>
+<h3 id="环境组件分析"><a href="#环境组件分析" class="headerlink" title="环境组件分析"></a>环境组件分析</h3><p>这边我们就假设有3台机器，当然实际生产中会根据情况的不同会有不同的搭建策略，但是大同小异，万变不离其宗</p>
+<h6 id="RM"><a href="#RM" class="headerlink" title="RM:"></a>RM:</h6><p>ResourceManager，跟HDFS的NN一个道理是大哥，也同样有两个大哥。RM是全局的资源管理器，负责整个系统的资源管理和分配。它主要由两个组件构成：调度器（Scheduler）和应用程序管理器（Applications Manager，ASM）。</p>
+<h6 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h6><p>调度器根据容量、队列等限制条件（如每个队列分配一定的资源，最多执行一定数量的作业等），将系统中的资源分配给各个正在运行的应用程序。需要注意的是，该调度器是一个“纯调度器”，它不再从事任何与具体应用程序相关的工作，比如不负责监控或者跟踪应用的执行状态等，也不负责重新启动因应用执行失败或者硬件故障而产生的失败任务，这些均交由应用程序相关的ApplicationMaster完成。</p>
+<h6 id="AM"><a href="#AM" class="headerlink" title="AM"></a>AM</h6><p>ApplicationMaster 用户提交的每个应用程序均包含一个AM 具体就一下3个用处</p>
+<p>与RM调度器协商以获取资源（用Container表示）；<br>将得到的任务进一步分配给内部的任务(资源的二次分配)；<br>与NM通信以启动/停止任务；<br>命名空间：<br>跟HDFS一样，不多做介绍，只要是有多个master的情况，都会有一个命名空间用来做active与Standby的切换</p>
+<h6 id="ZKFC"><a href="#ZKFC" class="headerlink" title="ZKFC"></a>ZKFC</h6><p>这个是与HDFS是最大的不同，在HDFS上ZKFS是一个单独的进程，但是在Yarn中，ZKFC是一个线程在RM中运行，做的工作跟HDFS的ZKFC相近，发送心跳给ZK，告诉他RM还是否活着</p>
+<h6 id="ZK"><a href="#ZK" class="headerlink" title="ZK"></a>ZK</h6><p>不多介绍，跟HDFS上的一样。</p>
+<h6 id="NM"><a href="#NM" class="headerlink" title="NM"></a>NM</h6><p>NodeManager具体干活的小弟，是每个节点上的资源和任务管理器，一方面，它会定时地向RM汇报本节点上的资源使用情况和各个Container的运行状态；另一方面，它接收并处理来自AM的Container启动/停止等各种请求。</p>
+<p><strong>介绍完Yarn组件架构，也与HDFS的做了对比，YARN的设计架构与HDFS相似，但又有不同，因为设计的侧重有所不同，HDFS要求数据的可靠性，必须从数据可靠的角度设计，而Yarn侧更加注重性能，因为Yarn最坏的情况无非是重新跑一下作业，并不会影响数据的可靠性</strong></p>
+<p><strong>PS：NM不会像DN一样把心跳发给Standby的RM，因为没有必要，因为Active的RM挂了，StandBy的RM接手变成Active状态以后重新分配资源时，才需要心跳反馈，所以在NM不需要发送心跳给Standby的RM，这个也算是与HDFS架构中非常大的区别之一。</strong></p>
+<p>以下则是Yarn HA架构图（以为自己做画的图比较有魔性）<br><img src="/images/yarn.png" alt></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Yarn</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
+        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/03/29/YARN HA架构分析/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/03/28/HDFS HA架构分析/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">HDFS HA架构分析</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境组件分析"><span class="toc-number">2.</span> <span class="toc-text">环境组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#RM"><span class="toc-number">2.0.0.1.</span> <span class="toc-text">RM:</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Scheduler"><span class="toc-number">2.0.0.2.</span> <span class="toc-text">Scheduler</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#AM"><span class="toc-number">2.0.0.3.</span> <span class="toc-text">AM</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ZKFC"><span class="toc-number">2.0.0.4.</span> <span class="toc-text">ZKFC</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ZK"><span class="toc-number">2.0.0.5.</span> <span class="toc-text">ZK</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#NM"><span class="toc-number">2.0.0.6.</span> <span class="toc-text">NM</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -258,9 +378,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
