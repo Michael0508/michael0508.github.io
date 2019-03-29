@@ -17,7 +17,7 @@
 <meta property="og:description" content="打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://micheal0508.github.io/images/yarn.png">
-<meta property="og:updated_time" content="2019-03-29T19:03:33.689Z">
+<meta property="og:updated_time" content="2019-03-29T19:09:14.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YARN HA架构分析">
 <meta name="twitter:description" content="打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。">
@@ -208,7 +208,8 @@
 <h6 id="NM"><a href="#NM" class="headerlink" title="NM"></a>NM</h6><p>NodeManager具体干活的小弟，是每个节点上的资源和任务管理器，一方面，它会定时地向RM汇报本节点上的资源使用情况和各个Container的运行状态；另一方面，它接收并处理来自AM的Container启动/停止等各种请求。</p>
 <p><strong>介绍完Yarn组件架构，也与HDFS的做了对比，YARN的设计架构与HDFS相似，但又有不同，因为设计的侧重有所不同，HDFS要求数据的可靠性，必须从数据可靠的角度设计，而Yarn侧更加注重性能，因为Yarn最坏的情况无非是重新跑一下作业，并不会影响数据的可靠性</strong></p>
 <p><strong>PS：NM不会像DN一样把心跳发给Standby的RM，因为没有必要，因为Active的RM挂了，StandBy的RM接手变成Active状态以后重新分配资源时，才需要心跳反馈，所以在NM不需要发送心跳给Standby的RM，这个也算是与HDFS架构中非常大的区别之一。</strong></p>
-<p>以下则是Yarn HA架构图（以为自己做画的图比较有魔性）<br><img src="/images/yarn.png" alt></p>
+<p>以下则是Yarn HA架构图（以为自己做画的图比较有魔性）</p>
+<p><img src="/images/yarn.png" alt></p>
 
       
 
