@@ -6,18 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Tag: hexo | 超悦の博客</title>
+  <title>Hadoop高阶之压缩 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦の博客">
-<meta property="og:url" content="https://micheal0508.github.io/tags/hexo/index.html">
+  <meta name="description" content="在Hadoop的分布式部署中，在最后我留下了一个很大的坑，就是压缩，因为官网下载的Hadoop版本是不支持压缩的，本章就对压缩做一个分析，在后续blog中介绍如何编译一个支持压缩的hadoop版本！">
+<meta name="keywords" content="Hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop高阶之压缩">
+<meta property="og:url" content="https://micheal0508.github.io/2019/04/04/Hadoop高阶之压缩/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="在Hadoop的分布式部署中，在最后我留下了一个很大的坑，就是压缩，因为官网下载的Hadoop版本是不支持压缩的，本章就对压缩做一个分析，在后续blog中介绍如何编译一个支持压缩的hadoop版本！">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://micheal0508.github.io/images/compress_01.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/compress_02.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/compress_03.png">
+<meta property="og:updated_time" content="2019-04-04T15:45:04.061Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦の博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="Hadoop高阶之压缩">
+<meta name="twitter:description" content="在Hadoop的分布式部署中，在最后我留下了一个很大的坑，就是压缩，因为官网下载的Hadoop版本是不支持压缩的，本章就对压缩做一个分析，在后续blog中介绍如何编译一个支持压缩的hadoop版本！">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/compress_01.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
   
@@ -171,71 +177,269 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Hadoop高阶之压缩" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/24/Hexo搭建，开启blog之旅/" class="archive-article-date">
-  	<time datetime="2019-03-23T19:43:45.519Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/24/Hexo搭建，开启blog之旅/">Hexo安装教程，以及排坑过程</a>
+    <h1 class="article-title" itemprop="name">
+      Hadoop高阶之压缩
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/04/04/Hadoop高阶之压缩/" class="archive-article-date">
+  	<time datetime="2019-04-04T07:41:05.308Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在Hadoop的分布式部署中，在最后我留下了一个很大的坑，就是压缩，因为官网下载的Hadoop版本是不支持压缩的，本章就对压缩做一个分析，在后续blog中介绍如何编译一个支持压缩的hadoop版本！</p>
+<a id="more"></a>
+<h3 id="为什么要压缩"><a href="#为什么要压缩" class="headerlink" title="为什么要压缩"></a>为什么要压缩</h3><ol>
+<li>大数据数据量巨大，压缩可以节省HDFS磁盘空间。</li>
+<li>在分布式集群立shuffle过程中map task与reduce task往往不是在一台机器上运行的，所以reduce去捞map完成后的文件是需要占用内部网络带宽的，map后压缩可以节省IO。</li>
+<li>文件下了，自然传输就快了，从而提高系统处理速度。</li>
+</ol>
+<h3 id="坏处"><a href="#坏处" class="headerlink" title="坏处"></a>坏处</h3><p>由于使用数据时，需要先将数据解压，加重CPU负荷</p>
+<h4 id="压缩格式"><a href="#压缩格式" class="headerlink" title="压缩格式"></a>压缩格式</h4><table>
+<thead>
+<tr>
+<th>压缩格式</th>
+<th>工具</th>
+<th>算法</th>
+<th>扩展名</th>
+<th>是否支持分割</th>
+<th>Hadoop编码/解码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEFLATE</td>
+<td>N/A</td>
+<td>DEFLATE</td>
+<td>.deflate</td>
+<td>No</td>
+<td>org.apache.hadoop.io.compress.DefalutCodec</td>
+</tr>
+<tr>
+<td>gzip</td>
+<td>gzip</td>
+<td>DEFLATE</td>
+<td>.gz</td>
+<td>No</td>
+<td>org.apache.hadoop.io.compress.GzipCodec</td>
+</tr>
+<tr>
+<td>bzip2</td>
+<td>bzip2</td>
+<td>bzip2</td>
+<td>.bz2</td>
+<td>a    Yes</td>
+<td>org.apache.hadoop.io.compress.Bzip2Codec</td>
+</tr>
+<tr>
+<td>LZO</td>
+<td>Lzop</td>
+<td>LZO</td>
+<td>.lzo</td>
+<td>Yes(if index)</td>
+<td>com.hadoop.compression.lzo.LzoCodec</td>
+</tr>
+<tr>
+<td>LZ4</td>
+<td>N/A</td>
+<td>LZ4</td>
+<td>.lz4</td>
+<td>No</td>
+<td>org.apache.hadoop.io.compress.Lz4Codec</td>
+</tr>
+<tr>
+<td>Snappy</td>
+<td>N/A</td>
+<td>Snappy</td>
+<td>.snappy</td>
+<td>No</td>
+<td>org.apache.hadoop.io.compress.SnappyCodec</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/compress_01.png" alt></p>
+<p><strong>压缩比</strong></p>
+<p><img src="/images/compress_02.png" alt></p>
+<p><img src="/images/compress_03.png" alt></p>
+<p><strong>可以看出，压缩比越高，压缩时间越长，压缩比：Snappy&lt;LZ4&lt;LZO&lt;GZIP&lt;BZIP2</strong></p>
+<h4 id="压缩格式各自优缺点"><a href="#压缩格式各自优缺点" class="headerlink" title="压缩格式各自优缺点"></a>压缩格式各自优缺点</h4><ul>
+<li>gzip</li>
+</ul>
+<p><strong>优点：</strong><br>压缩比在四种压缩方式中较高；hadoop本身支持，在应用中处理gzip格式的文件就和直接处理文本一样；有hadoop native库；大部分linux系统都自带gzip命令，使用方便</p>
+<p><strong>缺点：</strong><br>不支持split</p>
+<ul>
+<li>lzo</li>
+</ul>
+<p><strong>优点：</strong><br>压缩/解压速度也比较快，合理的压缩率；支持split，是hadoop中最流行的压缩格式；支持hadoop native库；需要在linux系统下自行安装lzop命令，使用方便</p>
+<p><strong>缺点：</strong><br>压缩率比gzip要低；hadoop本身不支持，需要安装；lzo虽然支持split，但需要对lzo文件建索引，否则hadoop也是会把lzo文件看成一个普通文件（为了支持split需要建索引，需要指定inputformat为lzo格式）</p>
+<ul>
+<li>snappy</li>
+</ul>
+<p><strong>优点：</strong><br>压缩速度快；支持hadoop native库</p>
+<p><strong>缺点：</strong><br>不支持split；压缩比低；hadoop本身不支持，需要安装；linux系统下没有对应的命令</p>
+<ul>
+<li>bzip2</li>
+</ul>
+<p><strong>优点：</strong><br>支持split；具有很高的压缩率，比gzip压缩率都高；hadoop本身支持，但不支持native；在linux系统下自带bzip2命令，使用方便</p>
+<p><strong>缺点：</strong><br>压缩/解压速度慢；不支持native</p>
+<p><strong>总结：</strong></p>
+<p>不同的场景选择不同的压缩方式，肯定没有一个一劳永逸的方法，如果选择高压缩比，那么对于cpu的性能要求要高，同时压缩、解压时间耗费也多；选择压缩比低的，对于磁盘io、网络io的时间要多，空间占据要多；对于支持分割的，可以实现并行处理。</p>
+<p><strong>应用场景：</strong></p>
+<p>生产中一般在HDFS 、Hive、HBase中会使用；</p>
+<p>当然在当今生产中结合Spark来一起使用是必须的了。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
+        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/04/04/Hadoop高阶之压缩/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/04/02/Hadoop高阶之分布式部署/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hadoop高阶之分布式部署</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要压缩"><span class="toc-number">1.</span> <span class="toc-text">为什么要压缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#坏处"><span class="toc-number">2.</span> <span class="toc-text">坏处</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#压缩格式"><span class="toc-number">2.1.</span> <span class="toc-text">压缩格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#压缩格式各自优缺点"><span class="toc-number">2.2.</span> <span class="toc-text">压缩格式各自优缺点</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -258,9 +462,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
