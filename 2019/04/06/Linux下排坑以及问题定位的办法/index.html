@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
   <title>Linux下排坑以及问题定位的办法 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前几天linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。">
+  <meta name="description" content="前几天Linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。">
 <meta name="keywords" content="Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux下排坑以及问题定位的办法">
 <meta property="og:url" content="https://micheal0508.github.io/2019/04/06/Linux下排坑以及问题定位的办法/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="前几天linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。">
+<meta property="og:description" content="前几天Linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://micheal0508.github.io/images/debug01.png">
-<meta property="og:updated_time" content="2019-04-06T13:12:13.648Z">
+<meta property="og:updated_time" content="2019-04-06T13:13:59.502Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux下排坑以及问题定位的办法">
-<meta name="twitter:description" content="前几天linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。">
+<meta name="twitter:description" content="前几天Linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。">
 <meta name="twitter:image" content="https://micheal0508.github.io/images/debug01.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
@@ -195,7 +195,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>前几天linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。<br><a id="more"></a></p>
+        <p>前几天Linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。<br><a id="more"></a></p>
 <h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><ol>
 <li>slave文件格式问题</li>
 <li>配置了2个nodenode但是不能起来或者只能起来一个！</li>
