@@ -17,7 +17,7 @@
 <meta property="og:description" content="打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://micheal0508.github.io/images/yarn.png">
-<meta property="og:updated_time" content="2019-03-29T19:09:14.541Z">
+<meta property="og:updated_time" content="2019-04-06T09:31:25.579Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YARN HA架构分析">
 <meta name="twitter:description" content="打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。">
@@ -195,8 +195,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。</p>
-<a id="more"></a>
+        <p>打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。<br><a id="more"></a></p>
 <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>YARN(Yet Another Resource Negotiator),资源协调者,我的理解就是基本大数据的作业都是由这家伙调度的（比如最简单的MR作业，生产上的Spark作业等）他可为上层应用提供统一的资源管理和调度，它的引入为集群在利用率、资源统一管理和数据共享等方面带来了巨大好处。</p>
 <h3 id="环境组件分析"><a href="#环境组件分析" class="headerlink" title="环境组件分析"></a>环境组件分析</h3><p>这边我们就假设有3台机器，当然实际生产中会根据情况的不同会有不同的搭建策略，但是大同小异，万变不离其宗</p>
 <h6 id="RM"><a href="#RM" class="headerlink" title="RM:"></a>RM:</h6><p>ResourceManager，跟HDFS的NN一个道理是大哥，也同样有两个大哥。RM是全局的资源管理器，负责整个系统的资源管理和分配。它主要由两个组件构成：调度器（Scheduler）和应用程序管理器（Applications Manager，ASM）。</p>

@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="超悦の博客">
 <meta property="og:description" content="昨天介绍了Hadoop在map task与reduce task作业时会有压缩处理，这样可以大大减少IO，可以减少很多不必要的资源浪费，今天我们就分析一下在map task之前，map可以拿到的那部分split">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-06T09:29:13.060Z">
+<meta property="og:updated_time" content="2019-04-06T09:31:05.773Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop高阶之Number of split分析">
 <meta name="twitter:description" content="昨天介绍了Hadoop在map task与reduce task作业时会有压缩处理，这样可以大大减少IO，可以减少很多不必要的资源浪费，今天我们就分析一下在map task之前，map可以拿到的那部分split">
@@ -193,8 +193,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>昨天介绍了Hadoop在map task与reduce task作业时会有压缩处理，这样可以大大减少IO，可以减少很多不必要的资源浪费，今天我们就分析一下在map task之前，map可以拿到的那部分split</p>
-<a id="more"></a>
+        <p>昨天介绍了Hadoop在map task与reduce task作业时会有压缩处理，这样可以大大减少IO，可以减少很多不必要的资源浪费，今天我们就分析一下在map task之前，map可以拿到的那部分split<br><a id="more"></a></p>
 <h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>split：split是逻辑切片，在mapreduce中的map task开始之前，将文件按照指定的大小切割成若干个部分，每一部分称为一个split，默认是split的大小与block的大小相等，均为128MB。</p>
 <p>解释下：因为是高阶的，所以一般情况下分析这个东西基本上就是跟源码所相关，一般而言都是调优时使用，基础码农也不需要关心这个，因为split默认就是跟block大小相等，在一般作业情况下也足够了，我们下面就开始根据源码来分析下决定split的大小的关键几个因素，以及如何进行性能调优。</p>
 <h3 id="源码分析（以wordcount代码为例）"><a href="#源码分析（以wordcount代码为例）" class="headerlink" title="源码分析（以wordcount代码为例）"></a>源码分析（以wordcount代码为例）</h3><p>找到 job.waitForCompletion( true);进入waitForCompletion</p>
