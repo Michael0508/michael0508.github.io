@@ -8,20 +8,20 @@
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
   <title>shell编程之写Email | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前面一遍blog写了，linux的shell脚本编程的基础，本篇blog就来玩一点有意思的，就是利用sh脚本来发邮件，是不是很有趣呢？开始吧！！！">
+  <meta name="description" content="前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！">
 <meta name="keywords" content="Shell">
 <meta property="og:type" content="article">
 <meta property="og:title" content="shell编程之写Email">
 <meta property="og:url" content="https://micheal0508.github.io/2019/04/13/shell编程之写Email/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="前面一遍blog写了，linux的shell脚本编程的基础，本篇blog就来玩一点有意思的，就是利用sh脚本来发邮件，是不是很有趣呢？开始吧！！！">
+<meta property="og:description" content="前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://micheal0508.github.io/images/shell_mail_01.png">
 <meta property="og:image" content="https://micheal0508.github.io/images/shell_mail_02.png">
-<meta property="og:updated_time" content="2019-04-13T08:53:03.085Z">
+<meta property="og:updated_time" content="2019-04-13T08:56:30.648Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="shell编程之写Email">
-<meta name="twitter:description" content="前面一遍blog写了，linux的shell脚本编程的基础，本篇blog就来玩一点有意思的，就是利用sh脚本来发邮件，是不是很有趣呢？开始吧！！！">
+<meta name="twitter:description" content="前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！">
 <meta name="twitter:image" content="https://micheal0508.github.io/images/shell_mail_01.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
@@ -196,7 +196,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>前面一遍blog写了，linux的shell脚本编程的基础，本篇blog就来玩一点有意思的，就是利用sh脚本来发邮件，是不是很有趣呢？开始吧！！！<br><a id="more"></a></p>
+        <p>前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！<br><a id="more"></a></p>
 <h3 id="安装sendmail（基于CentOS）"><a href="#安装sendmail（基于CentOS）" class="headerlink" title="安装sendmail（基于CentOS）"></a>安装sendmail（基于CentOS）</h3><p><strong>敲黑板避坑：请全部使用root用户操作</strong><br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> -y sendmail sendmail-rc</span><br></pre></td></tr></table></figure></p>
 <p>测试是否可以开启sendmail</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service sendmail start</span><br><span class="line"></span><br><span class="line"><span class="keyword">ps</span> -ef | <span class="keyword">grep</span> sendmail</span><br></pre></td></tr></table></figure>
