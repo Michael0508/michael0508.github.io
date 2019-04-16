@@ -6,18 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Category: 教程 | 超悦の博客</title>
+  <title>hadoop高阶之Lzo压缩分片 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦の博客">
-<meta property="og:url" content="https://micheal0508.github.io/categories/教程/index.html">
+  <meta name="description" content="LZO是一个较为优秀的压缩方式，它有占用CPU下，解压缩快，建立索引后支持分片做task非常符合分布式的系统的理念，本片文章我们门就来说说如何是使用LZO压缩格式，进行Hadoop的各项操作！">
+<meta name="keywords" content="Hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop高阶之Lzo压缩分片">
+<meta property="og:url" content="https://micheal0508.github.io/2019/04/16/hadoop高阶之Lzo压缩分片/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="LZO是一个较为优秀的压缩方式，它有占用CPU下，解压缩快，建立索引后支持分片做task非常符合分布式的系统的理念，本片文章我们门就来说说如何是使用LZO压缩格式，进行Hadoop的各项操作！">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://micheal0508.github.io/images/lzo01.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/lzo02.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/lzo03.png">
+<meta property="og:updated_time" content="2019-04-16T12:23:12.972Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦の博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="hadoop高阶之Lzo压缩分片">
+<meta name="twitter:description" content="LZO是一个较为优秀的压缩方式，它有占用CPU下，解压缩快，建立索引后支持分片做task非常符合分布式的系统的理念，本片文章我们门就来说说如何是使用LZO压缩格式，进行Hadoop的各项操作！">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/lzo01.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
   
@@ -171,36 +177,71 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-hadoop高阶之Lzo压缩分片" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      hadoop高阶之Lzo压缩分片
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/16/hadoop高阶之Lzo压缩分片/" class="archive-article-date">
+
+        
+        <a href="/2019/04/16/hadoop高阶之Lzo压缩分片/" class="archive-article-date">
   	<time datetime="2019-04-16T04:20:39.166Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-16</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/16/hadoop高阶之Lzo压缩分片/">hadoop高阶之Lzo压缩分片</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>LZO是一个较为优秀的压缩方式，它有占用CPU下，解压缩快，建立索引后支持分片做task非常符合分布式的系统的理念，本片文章我们门就来说说如何是使用LZO压缩格式，进行Hadoop的各项操作！<br><a id="more"></a></p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>lzo并不是linux系统原生支持，所以需要下载安装软件包,让linux支持这种压缩格式。</p>
+<p>另外之前我又一篇blog写的是如何build一个支持压缩的hadoop版本，这里就必须是用到那个bulid过的hadoop版本哦！</p>
+<h4 id="安装lzop-native-library"><a href="#安装lzop-native-library" class="headerlink" title="安装lzop native library"></a>安装lzop native library</h4><p>首先安装依赖<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="symbol">@hadoop000</span> ~]<span class="meta"># sudo yum -y install  lzo-devel  zlib-devel  gcc autoconf automake libtool</span></span><br></pre></td></tr></table></figure></p>
+<p>在下载lzo的jar包</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="variable">@hadoop00</span> software]<span class="variable">$ </span>wget <span class="symbol">http:</span>/<span class="regexp">/www.oberhumer.com/opensource</span><span class="regexp">/lzo/download</span><span class="regexp">/lzo-2.06.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>等待下载完成，解压到app文件夹下</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="meta">@hadoop</span>000 software]$ tar -zxvf lzo<span class="number">-2.06</span>.tar.gz -C <span class="regexp">~/app/</span></span><br><span class="line"></span><br><span class="line">[hadoop<span class="meta">@hadoop</span> lzo<span class="number">-2.06</span>]$  .<span class="regexp">/configure -enable-shared -prefix=/</span>home<span class="regexp">/hadoop/</span>app<span class="regexp">/lzo/</span></span><br><span class="line"></span><br><span class="line">[hadoop<span class="meta">@hadoop</span> lzo<span class="number">-2.06</span>]$  make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
+<p>注意看路径安装，如果是单点到此结束，如果是集群，请把该目录发到集群的所有机器上去！</p>
+<h4 id="安装hadoop-lzo"><a href="#安装hadoop-lzo" class="headerlink" title="安装hadoop-lzo"></a>安装hadoop-lzo</h4><p>下载hadoop-lzo</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="variable">@hadoop000</span> software]<span class="variable">$ </span>wget <span class="symbol">https:</span>/<span class="regexp">/github.com/twitter</span><span class="regexp">/hadoop-lzo/archive</span><span class="regexp">/master.zip</span></span><br></pre></td></tr></table></figure>
+<p>下载下来是一个zip的压缩文件，所以</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="variable">@hadoop000</span> software]<span class="variable">$ </span>unzip master.zip --d ~<span class="regexp">/app/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[hadoop<span class="variable">@hadoop000</span> app]<span class="variable">$ </span>cd hadoop-lzo-master/</span><br></pre></td></tr></table></figure>
+<p>修改pom.xml</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;properties&gt;</span><br><span class="line">    &lt;project<span class="selector-class">.build</span><span class="selector-class">.sourceEncoding</span>&gt;UTF-<span class="number">8</span>&lt;/project<span class="selector-class">.build</span><span class="selector-class">.sourceEncoding</span>&gt;</span><br><span class="line">    &lt;hadoop<span class="selector-class">.current</span><span class="selector-class">.version</span>&gt;<span class="number">2.6</span>.<span class="number">0</span>&lt;/hadoop<span class="selector-class">.current</span><span class="selector-class">.version</span>&gt;</span><br><span class="line">    &lt;hadoop<span class="selector-class">.old</span><span class="selector-class">.version</span>&gt;<span class="number">1.0</span>.<span class="number">4</span>&lt;/hadoop<span class="selector-class">.old</span><span class="selector-class">.version</span>&gt;</span><br><span class="line">&lt;/properties&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@hadoop000 hadoop-lzo-master]$ export CFLAGS=-m64</span><br><span class="line">[hadoop@hadoop000 hadoop-lzo-master]$ export CXXFLAGS=-m64</span><br><span class="line">[hadoop@hadoop000 hadoop-lzo-master]$ export C_INCLUDE_PATH=<span class="regexp">/home/hadoop</span><span class="regexp">/app/hadoop</span>-<span class="number">2.6</span>.<span class="number">0</span>-cdh5.<span class="number">7.0</span>/lzo/<span class="keyword">include</span></span><br><span class="line">[hadoop@hadoop000 hadoop-lzo-master]$ export LIBRARY_PATH=<span class="regexp">/home/hadoop</span><span class="regexp">/app/hadoop</span>-<span class="number">2.6</span>.<span class="number">0</span>-cdh5.<span class="number">7.0</span>/lzo/<span class="class"><span class="keyword">lib</span></span></span><br></pre></td></tr></table></figure>
+<p>以自己安装的路径为准</p>
+<p>mvn编译</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="meta">@hadoop</span>000 hadoop-lzo-master]$ mvn clean <span class="keyword">package</span> -Dmaven.test.skip=<span class="keyword">true</span></span><br></pre></td></tr></table></figure>
+<p>生成的包会在target的文件夹下，具体是什么名字，可以查看pom.xml定位，这个jar如果是集群的话也需要传到各个机器上。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@hadoop000 target]$ cp hadoop-lzo-<span class="number">0.4</span>.<span class="number">21</span>-SNAPSHOT.jar <span class="variable">$HADOOP_HOME</span><span class="regexp">/share/</span>hadoop<span class="regexp">/common/</span></span><br></pre></td></tr></table></figure>
+<p>把生成的jar包copy到hadoop的目录下</p>
+<h4 id="在hadoop的core-site-xml中添加"><a href="#在hadoop的core-site-xml中添加" class="headerlink" title="在hadoop的core-site.xml中添加"></a>在hadoop的core-site.xml中添加</h4><p>然后就是该hadoop里面的各种配置文件</p>
+<p>vim core-site.xml</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;property&gt;  </span><br><span class="line">    &lt;name&gt;io<span class="selector-class">.compression</span><span class="selector-class">.codecs</span>&lt;/name&gt;  </span><br><span class="line">    &lt;value&gt;org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.GzipCodec</span>,  </span><br><span class="line">              org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.DefaultCodec</span>,  </span><br><span class="line">              com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzoCodec</span>,  </span><br><span class="line">              com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzopCodec</span>,  </span><br><span class="line">              org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.BZip2Codec</span>  </span><br><span class="line">    &lt;/value&gt;  </span><br><span class="line">&lt;/property&gt;  </span><br><span class="line">&lt;property&gt;  </span><br><span class="line">    &lt;name&gt;io<span class="selector-class">.compression</span><span class="selector-class">.codec</span><span class="selector-class">.lzo</span><span class="selector-class">.class</span>&lt;/name&gt;  </span><br><span class="line">    &lt;value&gt;com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzoCodec</span>&lt;/value&gt;  </span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="在mapred-site-xml中添加"><a href="#在mapred-site-xml中添加" class="headerlink" title="在mapred-site.xml中添加"></a>在mapred-site.xml中添加</h4><p>vim mapred-site.xml</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;property&gt;    </span><br><span class="line">    &lt;name&gt;mapred<span class="selector-class">.compress</span><span class="selector-class">.map</span><span class="selector-class">.output</span>&lt;/name&gt;    </span><br><span class="line">    &lt;value&gt;true&lt;/value&gt;    </span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;property&gt;    </span><br><span class="line">    &lt;name&gt;mapred<span class="selector-class">.map</span><span class="selector-class">.output</span><span class="selector-class">.compression</span><span class="selector-class">.codec</span>&lt;/name&gt;    </span><br><span class="line">    &lt;value&gt;com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzoCodec</span>&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">   &lt;name&gt;mapreduce<span class="selector-class">.output</span><span class="selector-class">.fileoutputformat</span><span class="selector-class">.compress</span>&lt;/name&gt;</span><br><span class="line">   &lt;value&gt;true&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line"></span><br><span class="line">&lt;property&gt;</span><br><span class="line">   &lt;name&gt;mapreduce<span class="selector-class">.output</span><span class="selector-class">.fileoutputformat</span><span class="selector-class">.compress</span><span class="selector-class">.codec</span>&lt;/name&gt;</span><br><span class="line">   &lt;value&gt;org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.BZip2Codec</span>&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<p>这些配置文件集群也是人手一份！！</p>
+<h4 id="准备-lzo的文件并大于128M"><a href="#准备-lzo的文件并大于128M" class="headerlink" title="准备.lzo的文件并大于128M"></a>准备.lzo的文件并大于128M</h4><p>因为要为分片操作，文件如果太小没必要做分片操作，所以我这边准备了一个186M左右的.lzo文件（用一个大文本做了一个wordcount）<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@hadoop000 mapreduce]$ hadoop jar hadoop-mapreduce-examples<span class="number">-2.6</span><span class="number">.0</span>-cdh5<span class="number">.7</span><span class="number">.0</span>jar wordcount /g6/lzo/part-r<span class="number">-00000.</span>lzo /g6/lzo/wc</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/lzo01.png" alt></p>
+<h4 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h4><p>如上图可见hadoop已经可以运行.lzo的文件了，但是可以看见number of split :1 说明没有分片，可就是说不管文件多大map task只有一个，这样明显就大大的降低了效率，怎么办呢？是不是之前我们弄出来的一个jar没有用到呢？是的，那个jar就是用来件index的</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@hadoop000 common]$ hadoop jar hadoop-lzo-<span class="number">0.4</span>.<span class="number">21</span>-SNAPSHOT<span class="selector-class">.jar</span> com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzoIndexer</span> /g6/lzo/part-r-<span class="number">00000</span>.lzo</span><br></pre></td></tr></table></figure>
+<p>然后在part-r-00000.lzo的同级目录下生成了part-r-00000.lzo.index</p>
+<p><img src="/images/lzo02.png" alt></p>
+<h4 id="分片进行mapreduce"><a href="#分片进行mapreduce" class="headerlink" title="分片进行mapreduce"></a>分片进行mapreduce</h4><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hadoop@hadoop000 mapreduce]$ hadoop jar hadoop-mapreduce-examples-<span class="number">2.6</span>.<span class="number">0</span>-cdh5.<span class="number">7.0</span><span class="selector-class">.jar</span> wordcount -D mapreduce<span class="selector-class">.job</span><span class="selector-class">.inputformat</span><span class="selector-class">.class</span>=com<span class="selector-class">.hadoop</span><span class="selector-class">.mapreduce</span><span class="selector-class">.LzoTextInputFormat</span> /g6/lzo/part-r-<span class="number">00000</span><span class="selector-class">.lzo</span>  /g6/lzo/wc01</span><br></pre></td></tr></table></figure>
+<p><img src="/images/lzo03.png" alt></p>
+<p>至此Lzo分片完成！！！</p>
 
-        <div class="article-info info-on-right">
-          
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -212,7 +253,7 @@
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -225,262 +266,117 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/04/16/hadoop高阶之Lzo压缩分片/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/13/shell编程之写Email/" class="archive-article-date">
-  	<time datetime="2019-04-13T00:51:30.629Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-13</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/13/shell编程之写Email/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">shell编程之写Email</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/13/shell编程之写Email/">shell编程之写Email</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Shell</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装lzop-native-library"><span class="toc-number">1.1.</span> <span class="toc-text">安装lzop native library</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装hadoop-lzo"><span class="toc-number">1.2.</span> <span class="toc-text">安装hadoop-lzo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在hadoop的core-site-xml中添加"><span class="toc-number">1.3.</span> <span class="toc-text">在hadoop的core-site.xml中添加</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在mapred-site-xml中添加"><span class="toc-number">1.4.</span> <span class="toc-text">在mapred-site.xml中添加</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#准备-lzo的文件并大于128M"><span class="toc-number">1.5.</span> <span class="toc-text">准备.lzo的文件并大于128M</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立索引"><span class="toc-number">1.6.</span> <span class="toc-text">建立索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分片进行mapreduce"><span class="toc-number">1.7.</span> <span class="toc-text">分片进行mapreduce</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/05/Hadoop高阶之编译支持压缩的Hadoop版本/" class="archive-article-date">
-  	<time datetime="2019-04-05T07:51:45.975Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/05/Hadoop高阶之编译支持压缩的Hadoop版本/">Hadoop高阶之编译支持压缩的Hadoop版本</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/05/Untitled/" class="archive-article-date">
-  	<time datetime="2019-04-05T07:51:45.975Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/05/Untitled/">Hadoop高阶之编译支持压缩的Hadoop版本</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/02/Hadoop高阶之分布式部署/" class="archive-article-date">
-  	<time datetime="2019-04-02T09:22:54.366Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/02/Hadoop高阶之分布式部署/">Hadoop高阶之分布式部署</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/24/Hexo搭建，开启blog之旅/" class="archive-article-date">
-  	<time datetime="2019-03-23T19:43:45.519Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/24/Hexo搭建，开启blog之旅/">Hexo安装教程，以及排坑过程</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -503,10 +399,10 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
-		isCategory: true,
+		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
 		root: "/",
