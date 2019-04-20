@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Tag: 随笔 | 超悦の博客</title>
+  <title>UDF修改hive源代码 | 超悦の博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦の博客">
-<meta property="og:url" content="https://micheal0508.github.io/tags/随笔/index.html">
+  <meta name="description" content="在我们的公司里，会有一个专门的UDF小组，专门用来添加一些功能，hive的官网是有介绍如何添加临时的UDF还有添加永久的UDF这些在这里也就都不介绍了！本章我们就来说，如果通过修改源码的方式，来实现UDF">
+<meta name="keywords" content="开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UDF修改hive源代码">
+<meta property="og:url" content="https://micheal0508.github.io/2019/04/20/Untitled/index.html">
 <meta property="og:site_name" content="超悦の博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="在我们的公司里，会有一个专门的UDF小组，专门用来添加一些功能，hive的官网是有介绍如何添加临时的UDF还有添加永久的UDF这些在这里也就都不介绍了！本章我们就来说，如果通过修改源码的方式，来实现UDF">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-20T08:39:48.013Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦の博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="UDF修改hive源代码">
+<meta name="twitter:description" content="在我们的公司里，会有一个专门的UDF小组，专门用来添加一些功能，hive的官网是有介绍如何添加临时的UDF还有添加永久的UDF这些在这里也就都不介绍了！本章我们就来说，如果通过修改源码的方式，来实现UDF">
   
     <link rel="alternative" href="/atom.xml" title="超悦の博客" type="application/atom+xml">
   
@@ -171,71 +173,192 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Untitled" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/24/项目开发流程/" class="archive-article-date">
-  	<time datetime="2019-03-23T22:55:18.149Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/24/项目开发流程/">企业级项目开发流程</a>
+    <h1 class="article-title" itemprop="name">
+      UDF修改hive源代码
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/04/20/Untitled/" class="archive-article-date">
+  	<time datetime="2019-04-20T00:38:57.923Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在我们的公司里，会有一个专门的UDF小组，专门用来添加一些功能，hive的官网是有介绍如何添加临时的UDF还有添加永久的UDF这些在这里也就都不介绍了！本章我们就来说，如果通过修改源码的方式，来实现UDF<br><a id="more"></a></p>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ol>
+<li>下载hive的对应本机hadoop的版本源码包，注意是源码包</li>
+<li>编写UDF的java代码，并放到源码对应的目录下</li>
+<li>修改FunctionRegistry.java文件（将写好的UDF注册上去）</li>
+<li>用maven编译修改好的hive源码</li>
+<li>将生成的指定lib包与部署在机器上的hive的lib做替换</li>
+</ol>
+<h4 id="下载hive的源码包"><a href="#下载hive的源码包" class="headerlink" title="下载hive的源码包"></a>下载hive的源码包</h4><p>我本机上的hadoop版本是hadoop-2.6.0-cdh5.7.0，所以对应下载的hive版本是hive-1.1.0-cdh5.7.0，这个在cdh官网或者git上去找对应的版本。</p>
+<h4 id="编写UDF的java代码"><a href="#编写UDF的java代码" class="headerlink" title="编写UDF的java代码"></a>编写UDF的java代码</h4><p>我这边制作一个最最简单的功能的添加，企业中更加复杂的功能的开发无非就是这个java的代码比较复杂而已，原理是一样的</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.hadoop.hive.ql.udf;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hive.ql.exec.<span class="type">Description</span>;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hive.ql.exec.<span class="type">UDF</span>;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.<span class="type">Text</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.<span class="type">Text</span>;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="meta">@Description</span>(</span><br><span class="line">        name = <span class="string">"helloWorld"</span>,</span><br><span class="line">        value = <span class="string">"helloWorld(String)"</span>,</span><br><span class="line">        extended = <span class="string">"return new Text(\"HelloWord:\" + s.toString());"</span></span><br><span class="line">)</span><br><span class="line"> </span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span>  <span class="keyword">extends</span> <span class="title">UDF</span> </span>&#123;</span><br><span class="line">    public <span class="type">Text</span> evaluate(<span class="keyword">final</span> <span class="type">Text</span> s) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s == <span class="literal">null</span>) &#123; <span class="keyword">return</span> <span class="literal">null</span>; &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">Text</span>(<span class="string">"HelloWord:"</span> + s.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后把这个文件扔上./ql/src/java/org/apache/hadoop/hive/ql/udf/的目录下</p>
+<h4 id="修改FunctionRegistry-java文件"><a href="#修改FunctionRegistry-java文件" class="headerlink" title="修改FunctionRegistry.java文件"></a>修改FunctionRegistry.java文件</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hive.ql.udf.HelloWord; <span class="comment">//这个包一定要导，这个包一定要导，这个包一定要导</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">    system.registerGenericUDF(<span class="string">"concat"</span>, <span class="type">GenericUDFConcat</span>.<span class="keyword">class</span>);</span><br><span class="line">    system.registerUDF(<span class="string">"my_hello"</span>, <span class="type">HelloWord</span>.<span class="keyword">class</span>, <span class="literal">false</span>); <span class="comment">// 添加注册信息</span></span><br><span class="line">    system.registerUDF(<span class="string">"substr"</span>, <span class="type">UDFSubstr</span>.<span class="keyword">class</span>, <span class="literal">false</span>);</span><br><span class="line">    ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>修改完，保存完事儿</p>
+<h4 id="用maven编译修改好的hive源码"><a href="#用maven编译修改好的hive源码" class="headerlink" title="用maven编译修改好的hive源码"></a>用maven编译修改好的hive源码</h4><p>进入hive源码包的根目录然后输入一下命令（前提maven在电脑里面有了，并且设置好了环境变量）</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean <span class="keyword">package</span> <span class="title">-Phadoop-2 -DskipTests -Pd</span>ist</span><br></pre></td></tr></table></figure>
+<p>这里注意，一定要学会如何科学上网，不会自己查，笔者在这里不多说了，被坑怕了！！！</p>
+<p>编译完成以后（maven的repo不全的话应该会要等很久很久），进入<br>./packaging/target目录解压apache-hive-1.1.0-cdh5.7.0-bin.tar.gz</p>
+<h4 id="将生成的指定lib包与部署在机器上的hive的lib做替换"><a href="#将生成的指定lib包与部署在机器上的hive的lib做替换" class="headerlink" title="将生成的指定lib包与部署在机器上的hive的lib做替换"></a>将生成的指定lib包与部署在机器上的hive的lib做替换</h4><p>解压完成后进入解压完的./lib目录下把hive-exec-1.1.0-cdh5.7.0.jar这个jar包跟环境里的$HIVE_HOME/lib错替换</p>
+<p><strong>PS：要替换整个lib目录可以，但是不觉得麻烦吗？</strong></p>
+<p>好了重启你的hive</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; <span class="built_in">show</span> <span class="built_in">functions</span>;</span><br></pre></td></tr></table></figure>
+<p>去找你的那个DUF吧</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">开发</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
+        			<a href="/categories/Hive//" class="article-tag-list-link color5">Hive</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/04/20/Untitled/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/04/16/Hue安装教程-Hive的使用/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hue安装教程-Hive的使用</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤"><span class="toc-number">1.</span> <span class="toc-text">步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#下载hive的源码包"><span class="toc-number">1.1.</span> <span class="toc-text">下载hive的源码包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编写UDF的java代码"><span class="toc-number">1.2.</span> <span class="toc-text">编写UDF的java代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改FunctionRegistry-java文件"><span class="toc-number">1.3.</span> <span class="toc-text">修改FunctionRegistry.java文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#用maven编译修改好的hive源码"><span class="toc-number">1.4.</span> <span class="toc-text">用maven编译修改好的hive源码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#将生成的指定lib包与部署在机器上的hive的lib做替换"><span class="toc-number">1.5.</span> <span class="toc-text">将生成的指定lib包与部署在机器上的hive的lib做替换</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -258,9 +381,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
