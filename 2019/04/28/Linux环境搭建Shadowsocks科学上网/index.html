@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Tag: HDFS | 超悦的博客</title>
+  <title>Linux环境搭建Shadowsocks科学上网 | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦的博客">
-<meta property="og:url" content="https://micheal0508.github.io/tags/HDFS/index.html">
+  <meta name="description" content="用maven编译时，maven会根据pom.xml去对应的网站现在依赖包，在公司里编译感觉不出有什么问题，因为公司都是用了maven私服所有下载的速度比较快，编译很快，但是在自己家里如果要搭建Hadoop或者Spark我们都需要去公网下载大量的依赖包，如果不会使用科学上网很有可能就会编译失败，就算成功时间也会特别长，今天就来写一下在linux环境下搭建科学上网的教程">
+<meta name="keywords" content="Shadowsocks">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux环境搭建Shadowsocks科学上网">
+<meta property="og:url" content="https://micheal0508.github.io/2019/04/28/Linux环境搭建Shadowsocks科学上网/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="用maven编译时，maven会根据pom.xml去对应的网站现在依赖包，在公司里编译感觉不出有什么问题，因为公司都是用了maven私服所有下载的速度比较快，编译很快，但是在自己家里如果要搭建Hadoop或者Spark我们都需要去公网下载大量的依赖包，如果不会使用科学上网很有可能就会编译失败，就算成功时间也会特别长，今天就来写一下在linux环境下搭建科学上网的教程">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-28T10:09:27.025Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦的博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="Linux环境搭建Shadowsocks科学上网">
+<meta name="twitter:description" content="用maven编译时，maven会根据pom.xml去对应的网站现在依赖包，在公司里编译感觉不出有什么问题，因为公司都是用了maven私服所有下载的速度比较快，编译很快，但是在自己家里如果要搭建Hadoop或者Spark我们都需要去公网下载大量的依赖包，如果不会使用科学上网很有可能就会编译失败，就算成功时间也会特别长，今天就来写一下在linux环境下搭建科学上网的教程">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -171,128 +173,210 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Linux环境搭建Shadowsocks科学上网" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/07/如何确定block损坏的位置和修复/" class="archive-article-date">
-  	<time datetime="2019-04-06T22:42:18.335Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-07</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/07/如何确定block损坏的位置和修复/">如何确定block损坏的位置和修复</a>
+    <h1 class="article-title" itemprop="name">
+      Linux环境搭建Shadowsocks科学上网
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/04/28/Linux环境搭建Shadowsocks科学上网/" class="archive-article-date">
+  	<time datetime="2019-04-28T02:08:41.334Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用maven编译时，maven会根据pom.xml去对应的网站现在依赖包，在公司里编译感觉不出有什么问题，因为公司都是用了maven私服所有下载的速度比较快，编译很快，但是在自己家里如果要搭建Hadoop或者Spark我们都需要去公网下载大量的依赖包，如果不会使用科学上网很有可能就会编译失败，就算成功时间也会特别长，今天就来写一下在linux环境下搭建科学上网的教程<br><a id="more"></a><br><strong>注：我的系统是基于centos 7的</strong></p>
+<h3 id="下载Shadowsocks依赖以及Shadowsocks软件"><a href="#下载Shadowsocks依赖以及Shadowsocks软件" class="headerlink" title="下载Shadowsocks依赖以及Shadowsocks软件"></a>下载Shadowsocks依赖以及Shadowsocks软件</h3><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> python-setuptools &amp;&amp; easy_install pip</span><br><span class="line"></span><br><span class="line">pip <span class="keyword">install</span> shadowsocks</span><br></pre></td></tr></table></figure>
+<h3 id="升级Shadowsocks"><a href="#升级Shadowsocks" class="headerlink" title="升级Shadowsocks"></a>升级Shadowsocks</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade git+https:<span class="regexp">//gi</span>thub.com<span class="regexp">/shadowsocks/</span>shadowsocks.git@master</span><br></pre></td></tr></table></figure>
+<p>注意：这里pip的版本可能也会提醒过低，那就升级pip</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip <span class="keyword">install</span> <span class="comment">--upgrade pip</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置shadowsocks-json文件"><a href="#配置shadowsocks-json文件" class="headerlink" title="配置shadowsocks.json文件"></a>配置shadowsocks.json文件</h3><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"server"</span>:<span class="string">"us2.XXXXX"</span>,     <span class="comment">#shadowsocks服务器地址</span></span><br><span class="line">    <span class="string">"server_port"</span>:<span class="number">10000</span>,      <span class="comment">#shadowsocks服务端口</span></span><br><span class="line">    <span class="string">"local_address"</span>: <span class="string">"127.0.0.1"</span>,</span><br><span class="line">    <span class="string">"local_port"</span>:<span class="number">1080</span>,</span><br><span class="line">    <span class="string">"password"</span>:<span class="string">"password"</span>,    <span class="comment">#shadowsocks服务端密码</span></span><br><span class="line">    <span class="string">"timeout"</span>:<span class="number">300</span>,</span><br><span class="line">    <span class="string">"method"</span>:<span class="string">"aes-128-gcm"</span>,</span><br><span class="line">    <span class="string">"fast_open"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"workers"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大家如果没有装好的我这里推荐一个网址<a href="https://ss.uunet.club/" target="_blank" rel="noopener">https://ss.uunet.club/</a></p>
+<p><strong>PS :这个网站可能也是需要科学上网才能上的，这个临时的翻墙手段我相信应该都会的</strong></p>
+<p>到这里我们把shadowsocks.json这个文件放到/etc/目录下（随便什么目录）</p>
+<h3 id="测试启动"><a href="#测试启动" class="headerlink" title="测试启动"></a>测试启动</h3><p>配置文件的路径改成自己的，如：/etc/shadowsocks.json</p>
+<ul>
+<li><p>前端启动：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sslocal -c <span class="regexp">/home/</span>xx<span class="regexp">/Software/</span>ShadowsocksConfig<span class="regexp">/shadowsocks.json</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>后端启动：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sslocal -c <span class="regexp">/home/</span>xx<span class="regexp">/Software/</span>ShadowsocksConfig<span class="regexp">/shadowsocks.json -d start</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>后端停止：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sslocal -c /<span class="built_in">home</span>/xx/Software/ShadowsocksConfig/shadowsocks.json -d <span class="built_in">stop</span>；</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启(修改配置要重启才生效)：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sslocal -c <span class="regexp">/home/</span>xx<span class="regexp">/Software/</span>ShadowsocksConfig<span class="regexp">/shadowsocks.json -d restart</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>或者</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup sslocal -c <span class="meta-keyword">/etc/</span>shadowsocks.json &gt; <span class="meta-keyword">/dev/</span>null <span class="number">2</span>&gt;<span class="variable">&amp;1</span> &amp;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>以上都以可以测试shadowsocks是否安装成功，成功以后下一步</p>
+<h3 id="安装-Privoxy"><a href="#安装-Privoxy" class="headerlink" title="安装 Privoxy"></a>安装 Privoxy</h3><p>安装好了 shadowsocks，但它是 socks5 代理，我门在 shell 里执行的命令，发起的网络请求现在还不支持 socks5 代理，只支持 http／https 代理。为了我门需要安装 privoxy 代理，它能把电脑上所有 http 请求转发给 shadowsocks。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http:<span class="comment">//blog.liuguofeng.com/wp-content/uploads/2018/07/privoxy-3.0.26-stable-src.tar.gz</span></span><br><span class="line"></span><br><span class="line">tar -zxvf privoxy-<span class="number">3.0</span>.<span class="number">26</span>-stable-src<span class="selector-class">.tar</span><span class="selector-class">.gz</span></span><br><span class="line"></span><br><span class="line">cd privoxy-<span class="number">3.0</span>.<span class="number">26</span>-stable</span><br></pre></td></tr></table></figure>
+<h4 id="编译-Privoxy"><a href="#编译-Privoxy" class="headerlink" title="编译 Privoxy"></a>编译 Privoxy</h4><p>新建一个privoxy，因为make的默认用户为privoxy，非privoxy用户make编译会报错</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">autoheader <span class="meta">&amp;&amp; autoconf</span></span><br><span class="line"></span><br><span class="line">./configure</span><br><span class="line"></span><br><span class="line">make <span class="meta">&amp;&amp; make install</span></span><br></pre></td></tr></table></figure>
+<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim <span class="regexp">/usr/</span>local<span class="regexp">/etc/</span>privoxy<span class="regexp">/config</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">listen-address <span class="number">127.0</span><span class="meta">.0</span><span class="meta">.1</span>:<span class="number">8118</span>      # <span class="number">8118</span> 是默认端口，不用改，下面会用到</span><br><span class="line">forward-socks5t / <span class="number">127.0</span><span class="meta">.0</span><span class="meta">.1</span>:<span class="number">1080</span> .  # 这里的端口写 shadowsocks 的本地端口,有个.不要删了</span><br></pre></td></tr></table></figure>
+<h4 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">export</span> <span class="attribute">http_proxy</span>=http://127.0.0.1:8118</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">https_proxy</span>=http://127.0.0.1:8118</span><br></pre></td></tr></table></figure>
+<p>source一下</p>
+<h4 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h4><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">privoxy --<span class="keyword">user</span> <span class="title">privoxy</span> /usr/local/etc/privoxy/config</span><br></pre></td></tr></table></figure>
+<p>测试一下<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl www<span class="selector-class">.google</span><span class="selector-class">.com</span></span><br></pre></td></tr></table></figure></p>
+<p>是否有一大推html出来，出来就是成功了，不要用ping，ping不出来的</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl ifconfig.<span class="keyword">me</span></span><br></pre></td></tr></table></figure>
+<p>看一下是不是自己的公网ip已经在大洋彼岸了呢？</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HDFS</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Shadowsocks</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
+        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/04/28/Linux环境搭建Shadowsocks科学上网/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/28/HDFS HA架构分析/" class="archive-article-date">
-  	<time datetime="2019-03-28T07:58:14.823Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-28</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/20/UDF修改hive源代码/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">UDF修改hive源代码</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/28/HDFS HA架构分析/">HDFS HA架构分析</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HDFS</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载Shadowsocks依赖以及Shadowsocks软件"><span class="toc-number">1.</span> <span class="toc-text">下载Shadowsocks依赖以及Shadowsocks软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#升级Shadowsocks"><span class="toc-number">2.</span> <span class="toc-text">升级Shadowsocks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置shadowsocks-json文件"><span class="toc-number">3.</span> <span class="toc-text">配置shadowsocks.json文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试启动"><span class="toc-number">4.</span> <span class="toc-text">测试启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Privoxy"><span class="toc-number">5.</span> <span class="toc-text">安装 Privoxy</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#编译-Privoxy"><span class="toc-number">5.1.</span> <span class="toc-text">编译 Privoxy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改配置文件"><span class="toc-number">5.2.</span> <span class="toc-text">修改配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置环境变量"><span class="toc-number">5.3.</span> <span class="toc-text">设置环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动服务"><span class="toc-number">5.4.</span> <span class="toc-text">启动服务</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -315,9 +399,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
