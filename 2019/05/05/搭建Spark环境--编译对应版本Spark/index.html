@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
   <title>搭建Spark环境--编译对应版本Spark | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="中所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
+  <meta name="description" content="众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
 <meta name="keywords" content="Spark">
 <meta property="og:type" content="article">
 <meta property="og:title" content="搭建Spark环境--编译对应版本Spark">
 <meta property="og:url" content="https://micheal0508.github.io/2019/05/05/搭建Spark环境--编译对应版本Spark/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="中所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
+<meta property="og:description" content="众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://micheal0508.github.io/images/Spark_build.png">
-<meta property="og:updated_time" content="2019-05-05T15:27:40.945Z">
+<meta property="og:updated_time" content="2019-05-05T15:28:48.173Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="搭建Spark环境--编译对应版本Spark">
-<meta name="twitter:description" content="中所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
+<meta name="twitter:description" content="众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
 <meta name="twitter:image" content="https://micheal0508.github.io/images/Spark_build.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
@@ -195,7 +195,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>中所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。<br><a id="more"></a></p>
+        <p>众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。<br><a id="more"></a></p>
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Spark是一个计算框架，一般而言是配合Hadoop的HDFS存储系统，跑在Yarn之上的，至少我们公司是用这套解决方案的，所以就会带来集群Hadoop版本与Spark官网上下载的不匹配，这种情况是绝对不可能上生产环境的，所以我们生产中都是根据集群上的Hadoop版本，用Spark的源码自行编译的。</p>
 <h3 id="编译前置环境"><a href="#编译前置环境" class="headerlink" title="编译前置环境"></a>编译前置环境</h3><ol>
 <li>maven-3.6.0</li>
