@@ -6,22 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>搭建Spark环境--编译对应版本Spark | 超悦的博客</title>
+  <title>Archives | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
-<meta name="keywords" content="Spark">
-<meta property="og:type" content="article">
-<meta property="og:title" content="搭建Spark环境--编译对应版本Spark">
-<meta property="og:url" content="https://micheal0508.github.io/2019/05/05/搭建Spark环境--编译对应版本Spark/index.html">
+  <meta name="description" content="记录与分享生产学习中的问题">
+<meta property="og:type" content="website">
+<meta property="og:title" content="超悦的博客">
+<meta property="og:url" content="https://micheal0508.github.io/archives/page/3/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
+<meta property="og:description" content="记录与分享生产学习中的问题">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://micheal0508.github.io/images/Spark_build.png">
-<meta property="og:updated_time" content="2019-05-05T15:28:48.173Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="搭建Spark环境--编译对应版本Spark">
-<meta name="twitter:description" content="众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。">
-<meta name="twitter:image" content="https://micheal0508.github.io/images/Spark_build.png">
+<meta name="twitter:title" content="超悦的博客">
+<meta name="twitter:description" content="记录与分享生产学习中的问题">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -175,208 +171,78 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-搭建Spark环境--编译对应版本Spark" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      搭建Spark环境--编译对应版本Spark
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2019" class="archive-year">2019</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2019/03/22/HIVE实战/" class="archive-article-date">
+  	<time datetime="2019-03-22T09:33:43.236Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-22</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2019/03/22/HIVE实战/">开发</a>
     </h1>
   
 
-        
-        <a href="/2019/05/05/搭建Spark环境--编译对应版本Spark/" class="archive-article-date">
-  	<time datetime="2019-05-05T07:26:43.935Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。<br><a id="more"></a></p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Spark是一个计算框架，一般而言是配合Hadoop的HDFS存储系统，跑在Yarn之上的，至少我们公司是用这套解决方案的，所以就会带来集群Hadoop版本与Spark官网上下载的不匹配，这种情况是绝对不可能上生产环境的，所以我们生产中都是根据集群上的Hadoop版本，用Spark的源码自行编译的。</p>
-<h3 id="编译前置环境"><a href="#编译前置环境" class="headerlink" title="编译前置环境"></a>编译前置环境</h3><ol>
-<li>maven-3.6.0</li>
-<li>hadoop-2.6.0-cdh5.7.0</li>
-<li>jdk1.8.0</li>
-<li>shadowsocks3.0.0 (科学上网) 可有可无，如果有编译成功率大大提高</li>
-<li>Scala 2.11.8</li>
-</ol>
-<h3 id="下载Spark源码"><a href="#下载Spark源码" class="headerlink" title="下载Spark源码"></a>下载Spark源码</h3><p>因为Hadoop环境本人的VM上已经有了，所以我们就下载Spark较新的版本2.4.2进行编译</p>
-<p>直接官网下载Spark2.4.3.taz，并解压<br><figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.apache.org/dist/spark/spark<span class="string">-2</span>.4.2/spark<span class="string">-2</span>.4.2.tgz</span><br><span class="line"></span><br><span class="line">tar -zxvf spark<span class="string">-2</span>.4.2.tgz</span><br><span class="line"></span><br><span class="line">cd spark<span class="string">-2</span>.4.2</span><br></pre></td></tr></table></figure></p>
-<p>进入Spark的根目录</p>
-<h3 id="编译Spark"><a href="#编译Spark" class="headerlink" title="编译Spark"></a>编译Spark</h3><p>根据官网的描述，Spark编译有2中方式</p>
-<ol>
-<li>直接用maven</li>
-<li>利用./dev/make-distribution.sh这个脚本进行编译</li>
-</ol>
-<p>官网还给了Sample</p>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">./dev/make-distribution.sh</span> <span class="params">--name</span> custom-spark <span class="params">--pip</span> <span class="params">--r</span> <span class="params">--tgz</span> -Psparkr -Phadoop-2.7 -Phive -Phive-thriftserver -Pmesos -Pyarn -Pkubernetes</span><br></pre></td></tr></table></figure>
-<p>当然上的sample现在跟我们的本地环境是不一样的需要改。</p>
-<p>来这边我们可以先</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">vim</span> <span class="selector-tag">pom</span><span class="selector-class">.xml</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">log4j.version</span>&gt;</span>1.2.17<span class="tag">&lt;/<span class="name">log4j.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">hadoop.version</span>&gt;</span>2.6.5<span class="tag">&lt;/<span class="name">hadoop.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">protobuf.version</span>&gt;</span>2.5.0<span class="tag">&lt;/<span class="name">protobuf.version</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">   <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">id</span>&gt;</span>hadoop-2.6<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">      <span class="comment">&lt;!-- Default hadoop profile. Uses global properties. --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>以上两个xml内容是比较重要的两个地方，上面指定了hadoop的版本，默认的hadoop版本就是2.6，但是Sample改成了2.7.所有我们的hadoop版本是hadoop-2.6.0-cdh5.7.0所以在还是2.6但是下版本我们需要用-Dhadoop.version=2.6.0-cdh5.7.0</p>
-<p>然后我们mesos是不用的所以-Pmesos可以去掉，所以最后我们build的执行语句就ok了，不过这个代码先别敲！</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dev./make-distribution.sh --name <span class="number">2.6</span><span class="number">.0</span>-cdh5<span class="number">.7</span><span class="number">.0</span> --tgz -Phadoop<span class="number">-2.6</span> -Phive-thriftserver -Pyarn -Pkubernetes -Dhadoop.version=<span class="number">2.6</span><span class="number">.0</span>-cdh5<span class="number">.7</span><span class="number">.0</span></span><br></pre></td></tr></table></figure>
-<p>因为-Dhadoop.version=2.6.0-cdh5.7.0会改变hadoop.version但是version=2.6.0-cdh5.7.0这个maven的仓库是没有的所有我们需要添加一个repository在pom.xml下</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">repository</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">id</span>&gt;</span>cloudera<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">url</span>&gt;</span>https://repository.cloudera.com/artifactory/cloudera-repos/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>至此万事俱备可以开始build</p>
-<p><strong>PS：有一个可以加快build的方式就是：</strong></p>
-<p>改一下make-distribution.sh里面的版本指定应为这个shell脚本里面指定环境版本的，这样build速度会加快很多哦<br><img src="/images/Spark_build.png" alt></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hive</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
+        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/05/05/搭建Spark环境--编译对应版本Spark/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2019/05/20/Spark性能优化之一——Kryo序列化/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Spark性能优化之一——Kryo序列化
-        
-      </div>
-    </a>
   
   
-    <a href="/2019/04/28/Linux环境搭建Shadowsocks科学上网/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Linux环境搭建Shadowsocks科学上网</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译前置环境"><span class="toc-number">2.</span> <span class="toc-text">编译前置环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下载Spark源码"><span class="toc-number">3.</span> <span class="toc-text">下载Spark源码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译Spark"><span class="toc-number">4.</span> <span class="toc-text">编译Spark</span></a></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
+    
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/archives/page/2/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span>
+    </nav>
   
 
 
@@ -400,8 +266,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
