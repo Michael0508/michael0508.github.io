@@ -6,18 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Tag: MapReduce | 超悦的博客</title>
+  <title>Azkaban调度框架的介绍与部署 | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦的博客">
-<meta property="og:url" content="https://micheal0508.github.io/tags/MapReduce/index.html">
+  <meta name="description" content="做大数据（其实做任何系统）不可能有程序猿无时不刻的盯着程序跑，所以必定需要有个调度框架来实现作业的调度，今天就来介绍一个开元的大数据调度框架Azkanban">
+<meta name="keywords" content="Azkaban">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azkaban调度框架的介绍与部署">
+<meta property="og:url" content="https://micheal0508.github.io/2019/05/21/Azkaban调度框架的介绍与部署/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="做大数据（其实做任何系统）不可能有程序猿无时不刻的盯着程序跑，所以必定需要有个调度框架来实现作业的调度，今天就来介绍一个开元的大数据调度框架Azkanban">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://micheal0508.github.io/images/Azkaban01.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/azkaban02.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/azkaban03.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/azkaban04.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/azkaban05.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/azkaban06.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/azkaban07.png">
+<meta property="og:updated_time" content="2019-05-21T16:53:43.877Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦的博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="Azkaban调度框架的介绍与部署">
+<meta name="twitter:description" content="做大数据（其实做任何系统）不可能有程序猿无时不刻的盯着程序跑，所以必定需要有个调度框架来实现作业的调度，今天就来介绍一个开元的大数据调度框架Azkanban">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/Azkaban01.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -171,75 +181,215 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Azkaban调度框架的介绍与部署" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/03/25/MapRedece在windows上的坑/" class="archive-article-date">
-  	<time datetime="2019-03-25T07:49:53.391Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-25</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/03/25/MapRedece在windows上的坑/">MapRedece在windows上的坑</a>
+    <h1 class="article-title" itemprop="name">
+      Azkaban调度框架的介绍与部署
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/05/21/Azkaban调度框架的介绍与部署/" class="archive-article-date">
+  	<time datetime="2019-05-21T08:51:16.137Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>做大数据（其实做任何系统）不可能有程序猿无时不刻的盯着程序跑，所以必定需要有个调度框架来实现作业的调度，今天就来介绍一个开元的大数据调度框架Azkanban<br><a id="more"></a></p>
+<h3 id="官网介绍"><a href="#官网介绍" class="headerlink" title="官网介绍"></a>官网介绍</h3><p>Azkaban  <a href="https://azkaban.github.io/" target="_blank" rel="noopener">https://azkaban.github.io/</a></p>
+<p>从官网上可以明显的看出这是一个开源框架，但并不是Apache社区的，官网也介绍到Azkaban是一个大数据的调度框架</p>
+<h3 id="优缺点介绍"><a href="#优缺点介绍" class="headerlink" title="优缺点介绍"></a>优缺点介绍</h3><h5 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h5><ol>
+<li>相较于另一个主流的调度框架Oozie，Azkaban算的上是一个轻量级的框架</li>
+<li>页面交互设计友好</li>
+</ol>
+<h5 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h5><ol>
+<li>非常明显不支持托拉拽操作，需要强大的前段再开发，才能实现</li>
+<li>没有短信或者电话通知功能，email功能鸡肋</li>
+</ol>
+<h3 id="部署模式"><a href="#部署模式" class="headerlink" title="部署模式"></a>部署模式</h3><ol>
+<li>solo-server mode :单机模式，内置了H2数据库，web和executor服务运行在一个进程上，可用于测试，本次测试部署的是单机模式，</li>
+<li>multiple-executor mode:集群模式，DB使用的是有主备的mysql，升级维护不影响使用，用于生产</li>
+</ol>
+<h2 id="安装与部署Azkaban"><a href="#安装与部署Azkaban" class="headerlink" title="安装与部署Azkaban"></a>安装与部署Azkaban</h2><p>准备环境：</p>
+<ol>
+<li>JDK 1.8</li>
+<li>gradle</li>
+<li>hadoop伪分布式测试环境</li>
+</ol>
+<h4 id="下载Azkabn源码包"><a href="#下载Azkabn源码包" class="headerlink" title="下载Azkabn源码包"></a>下载Azkabn源码包</h4><p>官网链接Downloads，进去线怎么下载怎么下载，本人这边测试版本为3.57.0</p>
+<h4 id="编译Azkaban"><a href="#编译Azkaban" class="headerlink" title="编译Azkaban"></a>编译Azkaban</h4><p>注意Azkaban官方建议使用gradlew编译</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="variable">@hadoop000</span> app]<span class="variable">$ </span>tar -zxvf ~<span class="regexp">/soft/azkaban</span>-<span class="number">3.57</span>.<span class="number">0</span>.tar.gz</span><br><span class="line">[hadoop<span class="variable">@hadoop000</span> azkaban-<span class="number">3.57</span>.<span class="number">0</span>]<span class="variable">$ </span>cd azkaban-<span class="number">3.57</span>.<span class="number">0</span></span><br><span class="line">[hadoop<span class="variable">@hadoop000</span> app]<span class="variable">$ </span>./gradlew build installDist -x test</span><br></pre></td></tr></table></figure>
+<p>简单吧，大概经历10-20分钟，编译完成</p>
+<h4 id="安装Azkaban"><a href="#安装Azkaban" class="headerlink" title="安装Azkaban"></a>安装Azkaban</h4><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="variable">@hadoop000</span> azkaban-<span class="number">3.57</span>.<span class="number">0</span>]<span class="variable">$ </span>cd azkaban-solo-server/build/distributions/</span><br><span class="line">[hadoop<span class="variable">@hadoop000</span> distributions]<span class="variable">$ </span>tar -zxvf azkaban-solo-server-<span class="number">0</span>.<span class="number">1.0</span>-SNAPSHOT.tar.gz -C ~<span class="regexp">/app/</span></span><br></pre></td></tr></table></figure>
+<p>至此安装完成，简单的改一下配置</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hadoop<span class="variable">@hadoop000</span> zkaban-solo-server-<span class="number">0</span>.<span class="number">1.0</span>-SNAPSHOT]<span class="variable">$ </span>cd conf/</span><br><span class="line">[hadoop<span class="variable">@hadoop000</span> conf]<span class="variable">$ </span>vi azkaban-users.xml</span><br></pre></td></tr></table></figure>
+<p>照着改个自己的账号密码</p>
+<h4 id="启动Azkaban"><a href="#启动Azkaban" class="headerlink" title="启动Azkaban"></a>启动Azkaban</h4><p>回到zkaban-solo-server-0.1.0-SNAPSHOT，注意一定要回到这个目录下，然后bin/start-solo.sh,一定要这么起，我试过进bin目录然后./start-solo.sh各种启动失败</p>
+<p>启动以后是不是应该测试一下里面的功能了呀，这边我不展开具体操作流程了，就根据官网的描述来使用一下</p>
+<h3 id="测试任务调度"><a href="#测试任务调度" class="headerlink" title="测试任务调度"></a>测试任务调度</h3><ol>
+<li>启动Azkaban以后进去 <a href="http://hadoop000:9100" target="_blank" rel="noopener">http://hadoop000:9100</a></li>
+<li>进入以后用设置好的帐号密码登录<br><img src="/images/Azkaban01.png" alt></li>
+</ol>
+<p>3.登录以后<br><img src="/images/azkaban02.png" alt><br>4.点击Create Project随便写个名字</p>
+<p><img src="/images/azkaban03.png" alt><br>5.开始建立一个job flow，官方的建议是建立2个文件</p>
+<ul>
+<li>flow20.project文件</li>
+<li>basic.flow basic则是flow的名称配置具体作业信息,作业名jobA,作业的类型命令，作业配置，执行的命令<br>flow20.project</li>
+</ul>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">azkaban-flow-<span class="built_in">version</span>: <span class="number">2.0</span></span><br></pre></td></tr></table></figure>
+<p>basic.flow</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">node<span class="variable">s:</span></span><br><span class="line">  - name: jobC</span><br><span class="line">    <span class="built_in">type</span>: noop</span><br><span class="line">    # jobC depends <span class="keyword">on</span> jobA <span class="built_in">and</span> jobB</span><br><span class="line">    dependsOn:</span><br><span class="line">      - jobA</span><br><span class="line">      - jobB</span><br><span class="line"></span><br><span class="line">  - name: jobA</span><br><span class="line">    <span class="built_in">type</span>: <span class="keyword">command</span></span><br><span class="line">    confi<span class="variable">g:</span></span><br><span class="line">      <span class="keyword">command</span>: <span class="keyword">echo</span> <span class="string">"This is an echoed text."</span></span><br><span class="line"></span><br><span class="line">  - name: jobB</span><br><span class="line">    <span class="built_in">type</span>: <span class="keyword">command</span></span><br><span class="line">    confi<span class="variable">g:</span></span><br><span class="line">      <span class="keyword">command</span>: <span class="keyword">pwd</span></span><br></pre></td></tr></table></figure>
+<p>&lt;我们直接来个稍稍复杂一点的！！！&gt;<br>6.将这两个文件打包成一个zip的压缩包<br>7.上传至Azbakanb的页面upload<br><img src="/images/azkaban04.png" alt><br><img src="/images/azkaban05.png" alt><br><img src="/images/azkaban06.png" alt><br>8.执行<br><img src="/images/azkaban07.png" alt></p>
+<p>在这里我们就可以看见这个项目的工作流程了，可以解决作业间的各项依赖关系，是在从这个角度出发这样的操作太不方便了，工作效率很低，如果写错调度的依赖关系很容易导致离线作业的失败，简而言之调度产品不支持托拉拽的都是不合格的，上生产会特别的麻烦。所以基本上所有的大公司的调度框架都有自己的一套，需要结合前端技术，我们这里就只做一个大概的介绍，当然Azkaban也是可以直接用的，毕竟开源+轻量级这两点就已经是非常大的优势了，单机玩玩或者上开发测试环境做测试都是可以的！</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">MapReduce</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Azkaban</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
+        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/05/21/Azkaban调度框架的介绍与部署/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/05/20/Spark性能优化之一——Kryo序列化/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Spark性能优化之一——Kryo序列化</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#官网介绍"><span class="toc-number">1.</span> <span class="toc-text">官网介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优缺点介绍"><span class="toc-number">2.</span> <span class="toc-text">优缺点介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#优点："><span class="toc-number">2.0.1.</span> <span class="toc-text">优点：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#缺点："><span class="toc-number">2.0.2.</span> <span class="toc-text">缺点：</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#部署模式"><span class="toc-number">3.</span> <span class="toc-text">部署模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装与部署Azkaban"><span class="toc-number"></span> <span class="toc-text">安装与部署Azkaban</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#下载Azkabn源码包"><span class="toc-number">0.1.</span> <span class="toc-text">下载Azkabn源码包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编译Azkaban"><span class="toc-number">0.2.</span> <span class="toc-text">编译Azkaban</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Azkaban"><span class="toc-number">0.3.</span> <span class="toc-text">安装Azkaban</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动Azkaban"><span class="toc-number">0.4.</span> <span class="toc-text">启动Azkaban</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试任务调度"><span class="toc-number">1.</span> <span class="toc-text">测试任务调度</span></a></li>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -262,9 +412,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
