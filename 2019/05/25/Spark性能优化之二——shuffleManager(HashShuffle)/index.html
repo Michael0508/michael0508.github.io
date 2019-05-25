@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Archives: 2019/5 | 超悦的博客</title>
+  <title>Spark性能优化之二——shuffleManager(HashShuffle) | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦的博客">
-<meta property="og:url" content="https://micheal0508.github.io/archives/2019/05/index.html">
+  <meta name="description" content="Shuffle过程被称作分布式系统的魔法操作，这个过程可以说是研究分布式计算，绕不过去的一个地方，它也是分布式系统的天敌，性能的杀手！">
+<meta name="keywords" content="Spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark性能优化之二——shuffleManager(HashShuffle)">
+<meta property="og:url" content="https://micheal0508.github.io/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="Shuffle过程被称作分布式系统的魔法操作，这个过程可以说是研究分布式计算，绕不过去的一个地方，它也是分布式系统的天敌，性能的杀手！">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://micheal0508.github.io/images/shuffle01.png">
+<meta property="og:image" content="https://micheal0508.github.io/images/shuffle02.png">
+<meta property="og:updated_time" content="2019-05-25T16:12:21.123Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦的博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="Spark性能优化之二——shuffleManager(HashShuffle)">
+<meta name="twitter:description" content="Shuffle过程被称作分布式系统的魔法操作，这个过程可以说是研究分布式计算，绕不过去的一个地方，它也是分布式系统的天敌，性能的杀手！">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/shuffle01.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -171,36 +176,62 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-Spark性能优化之二——shuffleManager(HashShuffle)" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      Spark性能优化之二——shuffleManager(HashShuffle)
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/" class="archive-article-date">
+
+        
+        <a href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/" class="archive-article-date">
   	<time datetime="2019-05-25T08:11:01.142Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-25</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/">Spark性能优化之二——shuffleManager(HashShuffle)</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Shuffle过程被称作分布式系统的魔法操作，这个过程可以说是研究分布式计算，绕不过去的一个地方，它也是分布式系统的天敌，性能的杀手！<br><a id="more"></a><br>HashShuffle是Spark1.2之前（不包含Spark1.2）默认的Shuffle方式是HASH，就是spark.shuffle.manager这个参数默认为HASH，从1.2开始spark.shuffle.manager这个参数变成了sort，我们今天就从HASH入手去了解Saprk的发展过程，并分析hashshuffle的优劣！</p>
+<h2 id="ShuffleManager"><a href="#ShuffleManager" class="headerlink" title="ShuffleManager"></a>ShuffleManager</h2><p>今天的重点就在这里，HashShuffle在1.2之前默认为HASH，1.2之后默认为sort，2.0以后HashShuffle退出历史舞台，今天我们对Shuffle的发展轨迹进行一下剖析，首先我们应该分析HashShuffle的原理！</p>
+<h3 id="一个wordCount的小程序"><a href="#一个wordCount的小程序" class="headerlink" title="一个wordCount的小程序"></a>一个wordCount的小程序</h3><figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">val textRDD = sc.textFile(<span class="string">"C:\Users\beyon\Desktop\test_spark"</span>)</span><br><span class="line">  val wc = textRDD.flatMap(<span class="symbol">_</span>.<span class="built_in">split</span>(<span class="string">","</span>))</span><br><span class="line">    .<span class="built_in">map</span>((<span class="symbol">_</span>,<span class="number">1</span>))</span><br><span class="line">    .reduceByKey(<span class="symbol">_</span>+<span class="symbol">_</span>).collect()</span><br></pre></td></tr></table></figure>
+<p>一下为Spark UI上的流程图</p>
+<p><img src="/images/shuffle01.png" alt></p>
+<p>我们知道只要遇到shuffle算子就会产生划分stage，如上划分出了俩个stage，这两个stage的并行度是可以直接代码指定控制的(调优)，对于shuffle后的stage称之为ResultStage/FinalStatge，shuffle之前的stage称之为ShuffleMapStage</p>
+<p>当让从图上我们是看不出整个shuffle的具体流程的，我们今天的测试是发生在Spark1.6.1上(因为2.0上HashShuffle已经被取消掉了)，从Spark1.6.1的源码中我们可以看到以下内容</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> shortShuffleMgrNames = <span class="type">Map</span>(</span><br><span class="line">    <span class="string">"hash"</span> -&gt; <span class="string">"org.apache.spark.shuffle.hash.HashShuffleManager"</span>,</span><br><span class="line">    <span class="string">"sort"</span> -&gt; <span class="string">"org.apache.spark.shuffle.sort.SortShuffleManager"</span>,</span><br><span class="line">    <span class="string">"tungsten-sort"</span> -&gt; <span class="string">"org.apache.spark.shuffle.sort.SortShuffleManager"</span>)</span><br><span class="line">  <span class="keyword">val</span> shuffleMgrName = conf.get(<span class="string">"spark.shuffle.manager"</span>, <span class="string">"sort"</span>)</span><br><span class="line">  <span class="keyword">val</span> shuffleMgrClass = shortShuffleMgrNames.getOrElse(shuffleMgrName.toLowerCase, shuffleMgrName)</span><br><span class="line">  <span class="keyword">val</span> shuffleManager = instantiateClass[<span class="type">ShuffleManager</span>](shuffleMgrClass)</span><br></pre></td></tr></table></figure>
+<p>可以看出1.6版本的默认shuffle方式是sort已经不是HASH了，所以要测试HashShuffle我们需要设置shuffle方式</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">val conf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">      .setMaster(<span class="string">"local[2]"</span>)</span><br><span class="line">      .setAppName(<span class="string">"HashShuff App"</span>)</span><br><span class="line">      .<span class="keyword">set</span>(<span class="string">"spark.local.dir"</span>, <span class="string">"/tmp"</span>)</span><br><span class="line">      .<span class="keyword">set</span>(<span class="string">"spark.shuffle.manager"</span>,<span class="string">"HASH"</span>)</span><br></pre></td></tr></table></figure>
+<p>以上代码将spark.shuffle.manager设置成HASH，注意一点不要用SparkSession因为这个是2.0以后的，现在的版本是1.6.1</p>
+<p>以下Hashshuffle过程图很好的诠释了shuffle的整个过程</p>
+<p><img src="/images/shuffle02.png" alt></p>
+<h5 id="对HashShuffle的分析"><a href="#对HashShuffle的分析" class="headerlink" title="对HashShuffle的分析"></a>对HashShuffle的分析</h5><ul>
+<li><p>每一个MapTask(ShuffleMapStage的task)会生成N个ReduceTask的临时文件，是写入本地磁盘的，默认的配置路径：spark.local.dir=/tmp，<strong>Spark如果是运行在yarn上，这个路径会被hadoop的core-stie.xml的配置所覆盖</strong></p>
+</li>
+<li><p>ReduceTask回去磁盘拉取这些临时文件放到缓冲区然后进行Reduce计算，缓冲区最大为48M，默认配置:spark.reducer.maxMbInFlight=48，这个默认参数勉强可以</p>
+</li>
+<li><p>写每个文件时都有个内存缓冲Bucket，默认是到32kB一写，生产中肯定不行，(调优点)缓冲太小了，写的太平频繁了，配置文件是：spark.shuffle.file.buffer.kb=32，这个参数生产上至少要调大10倍</p>
+</li>
+<li><p>产生临时文件数：M＊Ｒ，若生产上有1000M(maptask数量)，1000R(reduceTask的数量)，则产生100万个文件，这是万万不可接受的，如果来HDFS上产生这么多文件后果就是nameNode的OOM，性能上在生产环境中非常的不稳定！</p>
+</li>
+</ul>
+<p>缓冲的Bucket占用内存: C Ｒ32，若8Core的1000R的作业，则缓冲区占Executror就有 256M，这也是不可接受的。</p>
+<p>HashShuffleManager缺点总结：</p>
+<p>缺点一：Maptask生成的中间临时文件过多<br>缺点二：单个Bucket太小频发访问磁盘</p>
+<p>虽然以上的问题是可以通过技术手段进行弥补的，但是性能方面就真正的成为了性能杀手，所以该种Shuffle方式（包括他的变种）在后面版本中被彻底放弃了</p>
+<p>PS:有一个Spark技术上的误区，Spark都是运行在内存里的，这是个错误的认识，shuffle过程一定是需要落盘的，因为Spark的Executror是运行在一个分布式的集群之上的，不是单机，map的result是需要通过网络传输到reduce端的，所以shuffle过程被被称为性能杀手一点都没错，如果生产中的性能达不到要求的时候，首先想到的就是这个过程时候可以优化，像数据倾斜等等！</p>
 
-        <div class="article-info info-on-right">
-          
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -212,7 +243,7 @@
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -225,164 +256,117 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/21/Azkaban调度框架的介绍与部署/" class="archive-article-date">
-  	<time datetime="2019-05-21T08:51:16.137Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/05/21/Azkaban调度框架的介绍与部署/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Azkaban调度框架的介绍与部署</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/21/Azkaban调度框架的介绍与部署/">Azkaban调度框架的介绍与部署</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Azkaban</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ShuffleManager"><span class="toc-number">1.</span> <span class="toc-text">ShuffleManager</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一个wordCount的小程序"><span class="toc-number">1.1.</span> <span class="toc-text">一个wordCount的小程序</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#对HashShuffle的分析"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">对HashShuffle的分析</span></a></li></ol></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/20/Spark性能优化之一——Kryo序列化/" class="archive-article-date">
-  	<time datetime="2019-05-19T18:02:09.528Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/20/Spark性能优化之一——Kryo序列化/">Spark性能优化之一——Kryo序列化</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/05/搭建Spark环境--编译对应版本Spark/" class="archive-article-date">
-  	<time datetime="2019-05-05T07:26:43.935Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-05</time>
-</a>
-        </div>
-    	 
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/05/搭建Spark环境--编译对应版本Spark/">搭建Spark环境--编译对应版本Spark</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
+
+  
 
 
           </div>
@@ -405,8 +389,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
