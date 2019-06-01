@@ -6,22 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>HDFS HA架构分析 | 超悦的博客</title>
+  <title>Hive启动报错排坑 | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
-<meta name="keywords" content="Hadoop,HDFS">
+  <meta name="description" content="本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！ 部署Hadoop伪分布式 这个跟之前在Linux环境上部署Hadoop的伪分布式是完全一样的，我连包都没有换，直接把我云主机上的一个Hadoop包拉下来，改改参">
+<meta name="keywords" content="Hive,Mysql">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HDFS HA架构分析">
-<meta property="og:url" content="https://micheal0508.github.io/2019/03/28/HDFS HA架构分析/index.html">
+<meta property="og:title" content="Hive启动报错排坑">
+<meta property="og:url" content="https://micheal0508.github.io/2019/06/01/Hive启动报错排坑/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
+<meta property="og:description" content="本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！ 部署Hadoop伪分布式 这个跟之前在Linux环境上部署Hadoop的伪分布式是完全一样的，我连包都没有换，直接把我云主机上的一个Hadoop包拉下来，改改参">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://micheal0508.github.io/images/HDFS.png">
-<meta property="og:updated_time" content="2019-04-06T09:31:31.693Z">
+<meta property="og:image" content="https://micheal0508.github.io/images/mysql排坑.png">
+<meta property="og:updated_time" content="2019-06-01T13:31:45.998Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HDFS HA架构分析">
-<meta name="twitter:description" content="概念HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。">
-<meta name="twitter:image" content="https://micheal0508.github.io/images/HDFS.png">
+<meta name="twitter:title" content="Hive启动报错排坑">
+<meta name="twitter:description" content="本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！ 部署Hadoop伪分布式 这个跟之前在Linux环境上部署Hadoop的伪分布式是完全一样的，我连包都没有换，直接把我云主机上的一个Hadoop包拉下来，改改参">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/mysql排坑.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -175,42 +175,48 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-HDFS HA架构分析" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Hive启动报错排坑" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      HDFS HA架构分析
+      Hive启动报错排坑
     </h1>
   
 
         
-        <a href="/2019/03/28/HDFS HA架构分析/" class="archive-article-date">
-  	<time datetime="2019-03-28T07:58:14.823Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-28</time>
+        <a href="/2019/06/01/Hive启动报错排坑/" class="archive-article-date">
+  	<time datetime="2019-06-01T05:26:19.140Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-01</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。<br><a id="more"></a></p>
-<h4 id="HDFS的主要结构"><a href="#HDFS的主要结构" class="headerlink" title="HDFS的主要结构"></a>HDFS的主要结构</h4><p>HDFS是一个主从结构，一个HDFS集群是由一个名字节点，它是一个管理文件命名空间和调节客户端访问文件的主服务器，当然还有一些数据节点，通常是一个节点一个机器，它来管理对应节点的存储。HDFS对外开放文件命名空间并允许用户数据以文件形式存储。</p>
-<p>本文就开始从HDFS的主从结果入手，具体用我自己对HDFS的了解做一个HA（High Available）架构的分析。</p>
-<h4 id="HDFS的伪分布式"><a href="#HDFS的伪分布式" class="headerlink" title="HDFS的伪分布式"></a>HDFS的伪分布式</h4><ul>
-<li>NN（Name Node）名字节点(老大)</li>
-<li>SNN（secondary Name Node） 它不是NN的备份（但可以做备份），它主要工作是帮助NN合并editslog，减少NN启动时间。</li>
-<li>DN （Data Node）数据节点（小弟）<br>基本3个上面进程，就完成了一个伪分布式的HDFS，其中因为只有一台机器SNN可以不启动，完全使用NN-DN的主从结构就可以完成HDFS的最基本的功能，在最开始的学习过程中非常有用，笔者刚接触大数据时，学习以及后面的温故而知新都可以在单机HDFS上完成，但是注意实际生产是不可能用单机的，只能说是自己玩玩可以，后面我们就开始针对实际生产对HDFS做一个全面的剖析！</li>
-</ul>
-<h4 id="生产环境的搭建"><a href="#生产环境的搭建" class="headerlink" title="生产环境的搭建"></a>生产环境的搭建</h4><h6 id="NN："><a href="#NN：" class="headerlink" title="NN："></a>NN：</h6><p>根据伪分布式上NN-DN的主从关系来看，NN如果挂了，这个系统就铁定是挂了（老大挂了，小弟干嘛都不知道了，留着还有什么用），所以在实际生产中，第一会至少会部署2个NN进行工作（1个对外提供服务，另一个保持standby状态，随时准备切换active状态），这样一个挂了，还有个能接着工作，注意2个NN在同一时间只有一个NN是对外工作的。</p>
-<h6 id="命名空间："><a href="#命名空间：" class="headerlink" title="命名空间："></a>命名空间：</h6><p>既然有两个NN，对外服务时，2个NN不确定是哪个NN是工作状态的，我们不能没切换一次NN，我们就去改配置问件，所以引出一个命名空间的概念nameservice，他回去找到真正在对外工作的NN，这个操作client是完全无感知的</p>
-<h6 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h6><p>既然有2个NN那具体是哪个NN是Active哪个是StandBy呢？这里就需要ZooKeeper（顾名思义就是管理着），整个集群中Zookeeper布置的数量一定是2n+1个的，因为NN是哪个Active状态是由ZK选举产生的，既然是选举那必须是奇数个才行，否则同票，就会导致2个NN都处于StandBy状态，这个是生产中不能出现的问题。</p>
-<h6 id="ZK-FailoverController"><a href="#ZK-FailoverController" class="headerlink" title="ZK FailoverController"></a>ZK FailoverController</h6><p>ZKFC这个进程说白了就是测试NN是不是活着的，并将这个消息告知ZK，他一定是跟NN 1：1的，可以与NN配在同一台机器上，也可以不在同一台机器上，他是一个独立的进程（这个要注意与Yarn的ZKFC是不一样的）</p>
-<h6 id="Journal-Node"><a href="#Journal-Node" class="headerlink" title="Journal Node"></a>Journal Node</h6><p>出在两个NN之间，他们存的是edits日志信息，将Active的NN的行为丝毫不差的传达给StandBy的NN，StandBy的NN并不是什么事情都不做，而是重演Active的NN干的事情（假装他做过了），做到Active的NN挂掉的时候Standby的NN可以无缝对接</p>
-<h6 id="Data-Node"><a href="#Data-Node" class="headerlink" title="Data Node"></a>Data Node</h6><p>具体干活的小弟，具体的数据有NN支配，存放在DN中，也是分布在各个机器是的独立进程，跟着NN走，并随时发送心跳给两个NN，告知他们都还活着。</p>
-<p>对该HA架构，结合自己的理解，以及针对官网的描述，做以下的画图（见下图），非常清晰的表现了实际生产中HDFS的框架，大数据中主从架构是非常常见的，后续Yarn的HA架构我再做详细介绍！</p>
-<p><img src="/images/HDFS.png" alt></p>
+        <p>本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！</p>
+<p>部署Hadoop伪分布式</p>
+<p>这个跟之前在Linux环境上部署Hadoop的伪分布式是完全一样的，我连包都没有换，直接把我云主机上的一个Hadoop包拉下来，改改参数就，然后格式化一下namenode梳理起来了</p>
+<p>安装Mysql</p>
+<p>hive的元数据是存放在Mysql上的，所以必须要先安装mysql才可以启动hive，所以去下载一个mysql的mac版把。官网上只能下载到5版本的5.7.26，就拿这个版本吧，傻瓜式安装一步到位，注意在安装好的时候一个弹出框，里面有个临时密码，必须要记住哦</p>
+<p>2019-06-01T07:37:24.720578Z 1 [Note] A temporary password is generated for root@localhost: /ruck*fjO40i</p>
+<p>比如上面这个临时密码就是/ruck*fjO40i</p>
+<p>安装完成后可以进入mac的setting里面把Mysql的服务开起来</p>
+<p><img src="/images/mysql排坑.png" alt></p>
+<p>看见running也就是说已经启动了</p>
+<p>然后到终端去可以登录了Mysql了</p>
+<p>mysql -uroot -p<br>然后把临时密码复制上就可以登录了</p>
+<p>SET PASSWORD FOR ‘root‘@’localhost’ = PASSWORD(‘root’);<br>然后安装以上的明亮改掉root的密码，我个人喜欢改成root</p>
+<p>部署hive</p>
+<p>注意hive的版本与hadoop的要一致，我也是直接从Linux机器上直接scp下来，因为Linux的环境是我们测试环境lib是带有jdbc的jar包的，所以就不需要添加了，如果没有jar的小伙伴不要忘记添加jar包，否则一定是会报错的</p>
+<p>这时候我觉得已经万事俱备了把直接把hive配到环境变量里去，然后hive就可以跑起来了，果然我还是太天真了！！！！！ 报错的第一句如下</p>
+<p>Exception in thread “main” java.lang.RuntimeException: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.ql.metadata.SessionHiveMetaStoreClient<br>我觉得很奇怪，因为这个是个常规报错，只有两种可能</p>
+<p>hdfs没有起<br>jar包没有放到lib下 但是这两个问题我在部署的时候是很在意的，应该不会错呀！！！<br>不要急慢慢往下看报错日志</p>
+<p>Caused by: javax.jdo.JDOFatalDataStoreException: Unable to open a test connection to the given database. JDBC url = jdbc:mysql://hadoop000:3306/hive?createDatabaseIfNotExist=true, username = root. Terminating connection pool<br>到这个错我也是一脸懵逼，因为我在本地连数据库是没有问题的啊，再想了想，可能就是因为我是本地才能连接，肯定是Mysql的某一个地方需要设置（本人mysql的运维技术还是比较菜的），google一下才只要需要在mysql下输入一下命令</p>
+<p>GRANT ALL PRIVILEGES ON <em>.</em> TO ‘root‘@’%’ IDENTIFIED BY ‘root’ WITH GRANT OPTION;</p>
+<p>FLUSH PRIVILEGES;<br>外面连mysql是需要授权的，否则是无法连接到Mysql的hive就相当于是一个外部连接到Mysql的，所以就会一直报错</p>
+<p>总结：根据报错日志，定位到错误所在，然后对症解决，在公司里可能碰不到这样的问题，因为这些个不是我们开发需要关系的事情，但是懂得多一定不是坏事！！！！</p>
 
       
 
@@ -224,11 +230,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hive</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HDFS</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Mysql</a>
         		</li>
       		
 		</ul>
@@ -240,7 +246,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
+        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
         		</li>
       		
 		</ul>
@@ -295,7 +301,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/03/28/HDFS HA架构分析/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/06/01/Hive启动报错排坑/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -309,18 +315,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/03/29/YARN HA架构分析/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          YARN HA架构分析
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/03/26/结合Shell使用Hive的方式/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">结合Shell使用Hive的方式</div>
+    <a href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Spark性能优化之二——shuffleManager(HashShuffle)</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -347,7 +344,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#HDFS的主要结构"><span class="toc-number">1.1.</span> <span class="toc-text">HDFS的主要结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HDFS的伪分布式"><span class="toc-number">1.2.</span> <span class="toc-text">HDFS的伪分布式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#生产环境的搭建"><span class="toc-number">1.3.</span> <span class="toc-text">生产环境的搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#NN："><span class="toc-number">1.3.0.1.</span> <span class="toc-text">NN：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#命名空间："><span class="toc-number">1.3.0.2.</span> <span class="toc-text">命名空间：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ZooKeeper"><span class="toc-number">1.3.0.3.</span> <span class="toc-text">ZooKeeper</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ZK-FailoverController"><span class="toc-number">1.3.0.4.</span> <span class="toc-text">ZK FailoverController</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Journal-Node"><span class="toc-number">1.3.0.5.</span> <span class="toc-text">Journal Node</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Data-Node"><span class="toc-number">1.3.0.6.</span> <span class="toc-text">Data Node</span></a></li></ol></li></ol></li></ol>
+                    目录，不存在的…
                     </div>
                 </span>
             </div>

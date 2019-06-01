@@ -173,6 +173,116 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Hive启动报错排坑" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/06/01/Hive启动报错排坑/">Hive启动报错排坑</a>
+    </h1>
+  
+
+        
+        <a href="/2019/06/01/Hive启动报错排坑/" class="archive-article-date">
+  	<time datetime="2019-06-01T05:26:19.140Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！</p>
+<p>部署Hadoop伪分布式</p>
+<p>这个跟之前在Linux环境上部署Hadoop的伪分布式是完全一样的，我连包都没有换，直接把我云主机上的一个Hadoop包拉下来，改改参数就，然后格式化一下namenode梳理起来了</p>
+<p>安装Mysql</p>
+<p>hive的元数据是存放在Mysql上的，所以必须要先安装mysql才可以启动hive，所以去下载一个mysql的mac版把。官网上只能下载到5版本的5.7.26，就拿这个版本吧，傻瓜式安装一步到位，注意在安装好的时候一个弹出框，里面有个临时密码，必须要记住哦</p>
+<p>2019-06-01T07:37:24.720578Z 1 [Note] A temporary password is generated for root@localhost: /ruck*fjO40i</p>
+<p>比如上面这个临时密码就是/ruck*fjO40i</p>
+<p>安装完成后可以进入mac的setting里面把Mysql的服务开起来</p>
+<p><img src="/images/mysql排坑.png" alt></p>
+<p>看见running也就是说已经启动了</p>
+<p>然后到终端去可以登录了Mysql了</p>
+<p>mysql -uroot -p<br>然后把临时密码复制上就可以登录了</p>
+<p>SET PASSWORD FOR ‘root‘@’localhost’ = PASSWORD(‘root’);<br>然后安装以上的明亮改掉root的密码，我个人喜欢改成root</p>
+<p>部署hive</p>
+<p>注意hive的版本与hadoop的要一致，我也是直接从Linux机器上直接scp下来，因为Linux的环境是我们测试环境lib是带有jdbc的jar包的，所以就不需要添加了，如果没有jar的小伙伴不要忘记添加jar包，否则一定是会报错的</p>
+<p>这时候我觉得已经万事俱备了把直接把hive配到环境变量里去，然后hive就可以跑起来了，果然我还是太天真了！！！！！ 报错的第一句如下</p>
+<p>Exception in thread “main” java.lang.RuntimeException: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.ql.metadata.SessionHiveMetaStoreClient<br>我觉得很奇怪，因为这个是个常规报错，只有两种可能</p>
+<p>hdfs没有起<br>jar包没有放到lib下 但是这两个问题我在部署的时候是很在意的，应该不会错呀！！！<br>不要急慢慢往下看报错日志</p>
+<p>Caused by: javax.jdo.JDOFatalDataStoreException: Unable to open a test connection to the given database. JDBC url = jdbc:mysql://hadoop000:3306/hive?createDatabaseIfNotExist=true, username = root. Terminating connection pool<br>到这个错我也是一脸懵逼，因为我在本地连数据库是没有问题的啊，再想了想，可能就是因为我是本地才能连接，肯定是Mysql的某一个地方需要设置（本人mysql的运维技术还是比较菜的），google一下才只要需要在mysql下输入一下命令</p>
+<p>GRANT ALL PRIVILEGES ON <em>.</em> TO ‘root‘@’%’ IDENTIFIED BY ‘root’ WITH GRANT OPTION;</p>
+<p>FLUSH PRIVILEGES;<br>外面连mysql是需要授权的，否则是无法连接到Mysql的hive就相当于是一个外部连接到Mysql的，所以就会一直报错</p>
+<p>总结：根据报错日志，定位到错误所在，然后对症解决，在公司里可能碰不到这样的问题，因为这些个不是我们开发需要关系的事情，但是懂得多一定不是坏事！！！！</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hive</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Mysql</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/06/01/Hive启动报错排坑/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Spark性能优化之二——shuffleManager(HashShuffle)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -961,93 +1071,6 @@
 
 
   
-    <article id="post-shell编程基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/12/shell编程基础/">shell编程基础</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/12/shell编程基础/" class="archive-article-date">
-  	<time datetime="2019-04-12T07:11:30.941Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>从事大数据行业，不会linux那将是一件多么low的一件事情呢？那会Linux又需要什么的？cd ps touch vi这些会了就完事了？当然不是，今天就来写写Linux最酷的shell编程，虽说没有现在市面上流行的Python（屁通）脚本语言流行，但是贵在方便！！！</p>
-        
-          <a class="article-more-a" href="/2019/04/12/shell编程基础/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Shell</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/12/shell编程基础/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1202,6 +1225,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Mysql</a>
               </li>
             
             <div class="clearfix"></div>
