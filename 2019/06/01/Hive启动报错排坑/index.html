@@ -16,12 +16,12 @@
 <meta property="og:site_name" content="超悦的博客">
 <meta property="og:description" content="本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://micheal0508.github.io/images/mysql排坑.png">
-<meta property="og:updated_time" content="2019-06-01T13:38:51.573Z">
+<meta property="og:image" content="https://micheal0508.github.io/images/hive_mysql_01.png">
+<meta property="og:updated_time" content="2019-06-15T09:21:00.679Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hive启动报错排坑">
 <meta name="twitter:description" content="本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！">
-<meta name="twitter:image" content="https://micheal0508.github.io/images/mysql排坑.png">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/hive_mysql_01.png">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -196,26 +196,31 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！<br><a id="more"></a></p>
-<p>部署Hadoop伪分布式</p>
-<p>这个跟之前在Linux环境上部署Hadoop的伪分布式是完全一样的，我连包都没有换，直接把我云主机上的一个Hadoop包拉下来，改改参数就，然后格式化一下namenode梳理起来了</p>
-<p>安装Mysql</p>
-<p>hive的元数据是存放在Mysql上的，所以必须要先安装mysql才可以启动hive，所以去下载一个mysql的mac版把。官网上只能下载到5版本的5.7.26，就拿这个版本吧，傻瓜式安装一步到位，注意在安装好的时候一个弹出框，里面有个临时密码，必须要记住哦</p>
-<p>2019-06-01T07:37:24.720578Z 1 [Note] A temporary password is generated for root@localhost: /ruck*fjO40i</p>
+<h3 id="部署Hadoop伪分布式"><a href="#部署Hadoop伪分布式" class="headerlink" title="部署Hadoop伪分布式"></a>部署Hadoop伪分布式</h3><p>这个跟之前在Linux环境上部署Hadoop的伪分布式是完全一样的，我连包都没有换，直接把我云主机上的一个Hadoop包拉下来，改改参数就，然后格式化一下namenode梳理起来了</p>
+<h3 id="安装Mysql"><a href="#安装Mysql" class="headerlink" title="安装Mysql"></a>安装Mysql</h3><p>hive的元数据是存放在Mysql上的，所以必须要先安装mysql才可以启动hive，所以去下载一个mysql的mac版把。官网上只能下载到5版本的5.7.26，就拿这个版本吧，傻瓜式安装一步到位，注意在安装好的时候一个弹出框，里面有个临时密码，必须要记住哦</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">2019-06-01T07</span>:<span class="number">37</span>:<span class="number">24.720578</span>Z <span class="number">1</span> [Note] A temporary password is generated for root<span class="variable">@localhost</span>: /ruck*fjO40i</span><br></pre></td></tr></table></figure>
 <p>比如上面这个临时密码就是/ruck*fjO40i</p>
-<p>安装完成后可以进入mac的setting里面把Mysql的服务开起来</p>
-<p><img src="/images/mysql排坑.png" alt></p>
+<p>安装完成后可以进入mac的setting里面把Mysql的服务开起来!</p>
+<p><img src="/images/hive_mysql_01.png" alt></p>
 <p>看见running也就是说已经启动了</p>
 <p>然后到终端去可以登录了Mysql了</p>
-<p>mysql -uroot -p<br>然后把临时密码复制上就可以登录了</p>
-<p>SET PASSWORD FOR ‘root‘@’localhost’ = PASSWORD(‘root’);<br>然后安装以上的明亮改掉root的密码，我个人喜欢改成root</p>
-<p>部署hive</p>
-<p>注意hive的版本与hadoop的要一致，我也是直接从Linux机器上直接scp下来，因为Linux的环境是我们测试环境lib是带有jdbc的jar包的，所以就不需要添加了，如果没有jar的小伙伴不要忘记添加jar包，否则一定是会报错的</p>
-<p>这时候我觉得已经万事俱备了把直接把hive配到环境变量里去，然后hive就可以跑起来了，果然我还是太天真了！！！！！ 报错的第一句如下</p>
-<p>Exception in thread “main” java.lang.RuntimeException: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.ql.metadata.SessionHiveMetaStoreClient<br>我觉得很奇怪，因为这个是个常规报错，只有两种可能</p>
-<p>hdfs没有起<br>jar包没有放到lib下 但是这两个问题我在部署的时候是很在意的，应该不会错呀！！！<br>不要急慢慢往下看报错日志</p>
-<p>Caused by: javax.jdo.JDOFatalDataStoreException: Unable to open a test connection to the given database. JDBC url = jdbc:mysql://hadoop000:3306/hive?createDatabaseIfNotExist=true, username = root. Terminating connection pool<br>到这个错我也是一脸懵逼，因为我在本地连数据库是没有问题的啊，再想了想，可能就是因为我是本地才能连接，肯定是Mysql的某一个地方需要设置（本人mysql的运维技术还是比较菜的），google一下才只要需要在mysql下输入一下命令</p>
-<p>GRANT ALL PRIVILEGES ON <em>.</em> TO ‘root‘@’%’ IDENTIFIED BY ‘root’ WITH GRANT OPTION;</p>
-<p>FLUSH PRIVILEGES;<br>外面连mysql是需要授权的，否则是无法连接到Mysql的hive就相当于是一个外部连接到Mysql的，所以就会一直报错</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">mysql -uroot -p</span></span><br></pre></td></tr></table></figure>
+<p>然后把临时密码复制上就可以登录了</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="keyword">PASSWORD</span> <span class="keyword">FOR</span> <span class="string">'root'</span>@<span class="string">'localhost'</span> = <span class="keyword">PASSWORD</span>(<span class="string">'root'</span>);</span><br></pre></td></tr></table></figure>
+<p>然后安装以上的明亮改掉root的密码，我个人喜欢改成root</p>
+<h3 id="部署hive"><a href="#部署hive" class="headerlink" title="部署hive"></a>部署hive</h3><p>注意hive的版本与hadoop的要一致，我也是直接从Linux机器上直接scp下来，因为Linux的环境是我们测试环境lib是带有jdbc的jar包的，所以就不需要添加了，<strong>如果没有jar的小伙伴不要忘记添加jar包，否则一定是会报错的</strong></p>
+<p>这时候我觉得已经万事俱备了把直接把hive配到环境变量里去，然后hive就可以跑起来了，果然我还是太天真了！！！！！<br>报错的第一句如下</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread <span class="string">"main"</span> java<span class="selector-class">.lang</span><span class="selector-class">.RuntimeException</span>: java<span class="selector-class">.lang</span><span class="selector-class">.RuntimeException</span>: Unable to instantiate org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hive</span><span class="selector-class">.ql</span><span class="selector-class">.metadata</span><span class="selector-class">.SessionHiveMetaStoreClient</span></span><br></pre></td></tr></table></figure>
+<p>我觉得很奇怪，因为这个是个常规报错，只有两种可能</p>
+<ol>
+<li>hdfs没有起</li>
+<li>jar包没有放到lib下<br>但是这两个问题我在部署的时候是很在意的，应该不会错呀！！！</li>
+</ol>
+<p>不要急慢慢往下看报错日志</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Caused <span class="keyword">by</span>: javax.jdo.JDOFatalDataStoreException: Unable <span class="built_in">to</span> <span class="built_in">open</span> <span class="keyword">a</span> test connection <span class="built_in">to</span> <span class="keyword">the</span> given database. JDBC url = jdbc:mysql://hadoop000:<span class="number">3306</span>/hive?createDatabaseIfNotExist=<span class="literal">true</span>, username = root. Terminating connection pool</span><br></pre></td></tr></table></figure>
+<p>到这个错我也是一脸懵逼，因为我在本地连数据库是没有问题的啊，再想了想，可能就是因为我是本地才能连接，肯定是Mysql的某一个地方需要设置（本人mysql的运维技术还是比较菜的），google一下才只要需要在mysql下输入一下命令</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span> <span class="keyword">ALL</span> <span class="keyword">PRIVILEGES</span> <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">'root'</span>@<span class="string">'%'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">'root'</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> <span class="keyword">OPTION</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">FLUSH</span> <span class="keyword">PRIVILEGES</span>;</span><br></pre></td></tr></table></figure>
+<p>外面连mysql是需要授权的，否则是无法连接到Mysql的hive就相当于是一个外部连接到Mysql的，所以就会一直报错</p>
 <p>总结：根据报错日志，定位到错误所在，然后对症解决，在公司里可能碰不到这样的问题，因为这些个不是我们开发需要关系的事情，但是懂得多一定不是坏事！！！！</p>
 
       
@@ -344,7 +349,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    目录，不存在的…
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#部署Hadoop伪分布式"><span class="toc-number">1.</span> <span class="toc-text">部署Hadoop伪分布式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Mysql"><span class="toc-number">2.</span> <span class="toc-text">安装Mysql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署hive"><span class="toc-number">3.</span> <span class="toc-text">部署hive</span></a></li></ol>
                     </div>
                 </span>
             </div>
