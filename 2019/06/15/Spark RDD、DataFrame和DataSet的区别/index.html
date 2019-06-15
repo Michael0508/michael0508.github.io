@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>超悦的博客</title>
+  <title>Spark RDD、DataFrame和DataSet的区别 | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦的博客">
-<meta property="og:url" content="https://micheal0508.github.io/page/2/index.html">
+  <meta name="description" content="在Spark中，RDD、DataFrame、Dataset是最常用的数据类型，今天谈谈他们的区别！">
+<meta name="keywords" content="Spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark RDD、DataFrame和DataSet的区别">
+<meta property="og:url" content="https://micheal0508.github.io/2019/06/15/Spark RDD、DataFrame和DataSet的区别/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="在Spark中，RDD、DataFrame、Dataset是最常用的数据类型，今天谈谈他们的区别！">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-15T09:30:46.320Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦的博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="Spark RDD、DataFrame和DataSet的区别">
+<meta name="twitter:description" content="在Spark中，RDD、DataFrame、Dataset是最常用的数据类型，今天谈谈他们的区别！">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -171,119 +173,49 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-shell编程之写Email" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Spark RDD、DataFrame和DataSet的区别" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/13/shell编程之写Email/">shell编程之写Email</a>
+    <h1 class="article-title" itemprop="name">
+      Spark RDD、DataFrame和DataSet的区别
     </h1>
   
 
         
-        <a href="/2019/04/13/shell编程之写Email/" class="archive-article-date">
-  	<time datetime="2019-04-13T00:51:30.629Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-13</time>
+        <a href="/2019/06/15/Spark RDD、DataFrame和DataSet的区别/" class="archive-article-date">
+  	<time datetime="2019-06-15T09:30:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-15</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！<br>
-        
-          <a class="article-more-a" href="/2019/04/13/shell编程之写Email/#more">more >></a>
-        
-      
+        <p><strong>在Spark中，RDD、DataFrame、Dataset是最常用的数据类型，今天谈谈他们的区别！</strong><br><a id="more"></a></p>
+<h4 id="一-、共性"><a href="#一-、共性" class="headerlink" title="一 、共性"></a>一 、共性</h4><p>1、RDD、DataFrame、Dataset全都是spark平台下的分布式弹性数据集，为处理超大型数据提供便利</p>
+<p>2、三者都有惰性机制，在进行创建、转换，如map方法时，不会立即执行，只有在遇到Action如foreach时，三者才会开始遍历运算。</p>
+<p>3、三者都会根据spark的内存情况自动缓存运算，这样即使数据量很大，也不用担心会内存溢出</p>
+<p>4、三者都有partition的概念。</p>
+<h4 id="二、RDD优缺点"><a href="#二、RDD优缺点" class="headerlink" title="二、RDD优缺点"></a>二、RDD优缺点</h4><p>优点：<br>1、相比于传统的MapReduce框架，Spark在RDD中内置很多函数操作，group，map，filter等，方便处理结构化或非结构化数据。</p>
+<p>2、面向对象的编程风格</p>
+<p>3、编译时类型安全，编译时就能检查出类型错误</p>
+<p>缺点： </p>
+<p>1、序列化和反序列化的性能开销</p>
+<p>2、GC的性能开销，频繁的创建和销毁对象, 势必会增加GC</p>
+<h4 id="三、DataFrame"><a href="#三、DataFrame" class="headerlink" title="三、DataFrame"></a>三、DataFrame</h4><p>1、与RDD和Dataset不同，DataFrame每一行的类型固定为Row，只有通过解析才能获取各个字段的值。如</p>
+<p>df.foreach{<br>  x =&gt;<br>    val v1=x.getAs<a href="&quot;v1&quot;">String</a><br>    val v2=x.getAs<a href="&quot;v2&quot;">String</a><br>}</p>
+<p>2、DataFrame引入了schema和off-heap</p>
+<p>schema : RDD每一行的数据, 结构都是一样的. 这个结构就存储在schema中. Spark通过schame就能够读懂数据, 因此在通信和IO时就只需要序列化和反序列化数据, 而结构的部分就可以省略了.</p>
+<p>off-heap : 意味着JVM堆以外的内存, 这些内存直接受操作系统管理（而不是JVM）。Spark能够以二进制的形式序列化数据(不包括结构)到off-heap中, 当要操作数据时, 就直接操作off-heap内存. 由于Spark理解schema, 所以知道该如何操作.</p>
+<p>off-heap就像地盘, schema就像地图, Spark有地图又有自己地盘了, 就可以自己说了算了, 不再受JVM的限制, 也就不再收GC的困扰了.</p>
+<p>3、结构化数据处理非常方便，支持Avro, CSV, Elasticsearch数据等，也支持Hive, MySQL等传统数据表<br>4、兼容Hive，支持Hql、UDF</p>
+<p>有schema和off-heap概念，DataFrame解决了RDD的缺点, 但是却丢了RDD的优点. DataFrame不是类型安全的（只有编译后才能知道类型错误）, API也不是面向对象风格的.</p>
+<h4 id="四、DataSet"><a href="#四、DataSet" class="headerlink" title="四、DataSet"></a>四、DataSet</h4><p>1、DataSet是分布式的数据集合。DataSet是在Spark1.6中添加的新的接口。它集中了RDD的优点（强类型 和可以用强大lambda函数）以及Spark SQL优化的执行引擎。DataSet可以通过JVM的对象进行构建，可以用函数式的转换（map/flatmap/filter）进行多种操作。</p>
+<p>2、DataSet结合了RDD和DataFrame的优点, 并带来的一个新的概念Encoder。DataSet 通过Encoder实现了自定义的序列化格式，使得某些操作可以在无需序列化情况下进行。另外Dataset还进行了包括Tungsten优化在内的很多性能方面的优化。</p>
+<p>3、Dataset<row>等同于DataFrame（Spark 2.X）</row></p>
 
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Shell</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/13/shell编程之写Email/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-shell编程基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/12/shell编程基础/">shell编程基础</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/12/shell编程基础/" class="archive-article-date">
-  	<time datetime="2019-04-12T07:11:30.941Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>从事大数据行业，不会linux那将是一件多么low的一件事情呢？那会Linux又需要什么的？cd ps touch vi这些会了就完事了？当然不是，今天就来写写Linux最酷的shell编程，虽说没有现在市面上流行的Python（屁通）脚本语言流行，但是贵在方便！！！</p>
-        
-          <a class="article-more-a" href="/2019/04/12/shell编程基础/#more">more >></a>
-        
       
 
       
@@ -296,7 +228,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Shell</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
         		</li>
       		
 		</ul>
@@ -316,16 +248,75 @@
 
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/12/shell编程基础/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/06/15/Spark RDD、DataFrame和DataSet的区别/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2019/06/01/Hive启动报错排坑/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hive启动报错排坑</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -340,725 +331,32 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-如何确定block损坏的位置和修复" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/07/如何确定block损坏的位置和修复/">如何确定block损坏的位置和修复</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/07/如何确定block损坏的位置和修复/" class="archive-article-date">
-  	<time datetime="2019-04-06T22:42:18.335Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>生产过程中会有一些意外的情况发生，比如断电，网线被挖（别觉得好笑，我们公司还真就发生过），意外等等导致HDFS块损坏，也就是业务数据的丢失该怎么办？<br>
-        
-          <a class="article-more-a" href="/2019/04/07/如何确定block损坏的位置和修复/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HDFS</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/07/如何确定block损坏的位置和修复/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#一-、共性"><span class="toc-number">1.</span> <span class="toc-text">一 、共性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二、RDD优缺点"><span class="toc-number">2.</span> <span class="toc-text">二、RDD优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#三、DataFrame"><span class="toc-number">3.</span> <span class="toc-text">三、DataFrame</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四、DataSet"><span class="toc-number">4.</span> <span class="toc-text">四、DataSet</span></a></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
-  
-    <article id="post-Linux下排坑以及问题定位的办法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/06/Linux下排坑以及问题定位的办法/">Linux下排坑以及问题定位的办法</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/06/Linux下排坑以及问题定位的办法/" class="archive-article-date">
-  	<time datetime="2019-04-06T12:55:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前几天Linux上分布式部署了Hadoop环境，其实在部署过程中出现过挺多问题的，但是教程么，就默认没有问题下去了。在本篇文章里，我们开始说，部署过程中会遇到一些奇怪的问题并解决它。决解问题是必须的，但是实际生产中如果找到了问题所在，解决它其实并不是难点，真正困难的是结合自身的经验去定位问题的发生点，找到根源快速排坑。下面我们就从Linux环境分布式部署Hadoop中发生的问题展开分析。<br>
-        
-          <a class="article-more-a" href="/2019/04/06/Linux下排坑以及问题定位的办法/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/06/Linux下排坑以及问题定位的办法/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Hadoop高阶之Number of split分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/06/Hadoop高阶之Number of split分析/">Hadoop高阶之Number of split分析</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/06/Hadoop高阶之Number of split分析/" class="archive-article-date">
-  	<time datetime="2019-04-06T01:28:35.217Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>昨天介绍了Hadoop在map task与reduce task作业时会有压缩处理，这样可以大大减少IO，可以减少很多不必要的资源浪费，今天我们就分析一下在map task之前，map可以拿到的那部分split<br>
-        
-          <a class="article-more-a" href="/2019/04/06/Hadoop高阶之Number of split分析/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/06/Hadoop高阶之Number of split分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Hadoop高阶之编译支持压缩的Hadoop版本" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/05/Hadoop高阶之编译支持压缩的Hadoop版本/">Hadoop高阶之编译支持压缩的Hadoop版本</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/05/Hadoop高阶之编译支持压缩的Hadoop版本/" class="archive-article-date">
-  	<time datetime="2019-04-05T07:51:45.975Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面Hadoop分布式部署，以及压缩原理都已经阐述明白了，现在这个情况在不删除我生产配置中的压缩配置，是没办法请进行map task跟reduce task的，只有删除压缩配置才能工作，现在我们就自己手动build一个支持压缩的Hadoop版本吧！<br>
-        
-          <a class="article-more-a" href="/2019/04/05/Hadoop高阶之编译支持压缩的Hadoop版本/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/05/Hadoop高阶之编译支持压缩的Hadoop版本/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Hadoop高阶之压缩" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/04/Hadoop高阶之压缩/">Hadoop高阶之压缩</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/04/Hadoop高阶之压缩/" class="archive-article-date">
-  	<time datetime="2019-04-04T07:41:05.308Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在Hadoop的分布式部署中，在最后我留下了一个很大的坑，就是压缩，因为官网下载的Hadoop版本是不支持压缩的，本章就对压缩做一个分析，在后续blog中介绍如何编译一个支持压缩的hadoop版本！<br>
-        
-          <a class="article-more-a" href="/2019/04/04/Hadoop高阶之压缩/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/04/Hadoop高阶之压缩/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Hadoop高阶之分布式部署" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/02/Hadoop高阶之分布式部署/">Hadoop高阶之分布式部署</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/02/Hadoop高阶之分布式部署/" class="archive-article-date">
-  	<time datetime="2019-04-02T09:22:54.366Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-02</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面对HDFS以及Yarn做了HA架构的分析，其中提到实际生产中，不会使用伪分布式，所以我们肯定得部署在分布式集群中，所以今天就来结合HDFS与Yarn的架构来，搭建一个Hadoop最基本的分布式环境吧！<br>
-        
-          <a class="article-more-a" href="/2019/04/02/Hadoop高阶之分布式部署/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/02/Hadoop高阶之分布式部署/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-YARN HA架构分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/29/YARN HA架构分析/">YARN HA架构分析</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/29/YARN HA架构分析/" class="archive-article-date">
-  	<time datetime="2019-03-29T11:02:29.870Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>打铁趁热，接着昨天HDFS的HA架构，今天来谈谈YARN的HA架构，Yarn还是遵从了主从结构，但是与HDFS是有所不同的，但又有很多相似之处。<br>
-        
-          <a class="article-more-a" href="/2019/03/29/YARN HA架构分析/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Yarn</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/29/YARN HA架构分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-HDFS HA架构分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/28/HDFS HA架构分析/">HDFS HA架构分析</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/28/HDFS HA架构分析/" class="archive-article-date">
-  	<time datetime="2019-03-28T07:58:14.823Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>HDFS 全称：分布式文件系统（Hadoop Distributed File System）是一个高度容错性的，适合部署在廉价的机器上的系统。<br>
-        
-          <a class="article-more-a" href="/2019/03/28/HDFS HA架构分析/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HDFS</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/28/HDFS HA架构分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -1081,8 +379,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
