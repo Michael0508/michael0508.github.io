@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>超悦的博客</title>
+  <title>Saprk必备技巧之--Spark RDD转DataFrame | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦的博客">
-<meta property="og:url" content="https://micheal0508.github.io/index.html">
+  <meta name="description" content="本篇文章介绍两种从Spark RDD转成DataFrame的方法，正所谓官网是最好的导师 官网之RDD转DF:http://spark.apache.org/docs/latest/sql-programming-guide.html#interoperating-with-rdds">
+<meta name="keywords" content="Spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Saprk必备技巧之--Spark RDD转DataFrame">
+<meta property="og:url" content="https://micheal0508.github.io/2019/06/16/Saprk必备技巧之--Spark RDD转DataFrame/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="本篇文章介绍两种从Spark RDD转成DataFrame的方法，正所谓官网是最好的导师 官网之RDD转DF:http://spark.apache.org/docs/latest/sql-programming-guide.html#interoperating-with-rdds">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-16T16:33:40.120Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦的博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="Saprk必备技巧之--Spark RDD转DataFrame">
+<meta name="twitter:description" content="本篇文章介绍两种从Spark RDD转成DataFrame的方法，正所谓官网是最好的导师 官网之RDD转DF:http://spark.apache.org/docs/latest/sql-programming-guide.html#interoperating-with-rdds">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -171,16 +173,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Saprk必备技巧之--Spark RDD转DataFrame" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Saprk必备技巧之--Spark RDD转DataFrame" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/16/Saprk必备技巧之--Spark RDD转DataFrame/">Saprk必备技巧之--Spark RDD转DataFrame</a>
+    <h1 class="article-title" itemprop="name">
+      Saprk必备技巧之--Spark RDD转DataFrame
     </h1>
   
 
@@ -194,14 +194,29 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>本篇文章介绍两种从Spark RDD转成DataFrame的方法，正所谓官网是最好的导师</p>
-<p>官网之RDD转DF:<br><a href="http://spark.apache.org/docs/latest/sql-programming-guide.html#interoperating-with-rdds" target="_blank" rel="noopener">http://spark.apache.org/docs/latest/sql-programming-guide.html#interoperating-with-rdds</a><br>
-        
-          <a class="article-more-a" href="/2019/06/16/Saprk必备技巧之--Spark RDD转DataFrame/#more">more >></a>
-        
+<p>官网之RDD转DF:<br><a href="http://spark.apache.org/docs/latest/sql-programming-guide.html#interoperating-with-rdds" target="_blank" rel="noopener">http://spark.apache.org/docs/latest/sql-programming-guide.html#interoperating-with-rdds</a><br><a id="more"></a></p>
+<p><strong>这里多说一句，我这个人的理解其实DataFrame就是带有schema信息的RDD，其实RDD转DF也就是添加一个schema的信息，以下两种方法知不是使用不同的方式添加schema信息</strong></p>
+<h3 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h3><p>第一种方式是使用反射的方式，用反射去推倒出来RDD里面的schema。这个方式简单，但是不建议使用，因为在工作当中，使用这种方式是有限制的。<br>对于以前的版本来说，case class最多支持22个字段如果超过了22个字段（<strong>这里是Spark1.x的时候，Spark2.x似乎已经解除了这个限制，但是再生产中还是不建议使用</strong>），我们就必须要自己开发一个类，实现product接口才行。因此这种方式虽然简单，但是不通用；因为生产中的字段是非常非常多的，是不可能只有20来个字段的。<br>示例：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * convert rdd to dataframe 1</span></span><br><span class="line"><span class="comment">  * @param spark</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">private</span> def runInferSchemaExample(spark:SparkSession): Unit =&#123;</span><br><span class="line">  <span class="keyword">import</span> spark.implicits._</span><br><span class="line">  val rdd = spark.sparkContext.textFile(<span class="string">"E:/大数据/data/people.txt"</span>)</span><br><span class="line">  val df = rdd.map(_.split(<span class="string">","</span>))</span><br><span class="line">              .map(<span class="function"><span class="params">x</span> =&gt;</span> People(x(<span class="number">0</span>), x(<span class="number">1</span>).trim.toInt))  <span class="comment">//将rdd的每一行都转换成了一个people</span></span><br><span class="line">              .toDF         <span class="comment">//必须先导入import spark.implicits._  不然这个方法会报错</span></span><br><span class="line">  df.show()</span><br><span class="line">  df.createOrReplaceTempView(<span class="string">"people"</span>)</span><br><span class="line">  <span class="comment">// 这个DF包含了两个字段name和age</span></span><br><span class="line">  val teenagersDF = spark.sql(<span class="string">"SELECT name, age FROM people WHERE age BETWEEN 13 AND 19"</span>)</span><br><span class="line">  <span class="comment">// teenager(0)代表第一个字段</span></span><br><span class="line">  <span class="comment">// 取值的第一种方式：index from zero</span></span><br><span class="line">  teenagersDF.map(<span class="function"><span class="params">teenager</span> =&gt;</span> <span class="string">"Name: "</span> + teenager(<span class="number">0</span>)).show()</span><br><span class="line">  <span class="comment">// 取值的第二种方式：byName</span></span><br><span class="line">  teenagersDF.map(<span class="function"><span class="params">teenager</span> =&gt;</span> <span class="string">"Name: "</span> + teenager.getAs[<span class="built_in">String</span>](<span class="string">"name"</span>) + <span class="string">","</span> + teenager.getAs[Int](<span class="string">"age"</span>)).show()</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 注意：case class必须定义在main方法之外；否则会报错</span></span><br><span class="line"><span class="keyword">case</span> <span class="keyword">class</span> People(name:<span class="built_in">String</span>, age:Int)</span><br></pre></td></tr></table></figure>
+<h3 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h3><p>创建一个DataFrame，使用编程的方式 这个方式用的非常多。通过编程方式指定schema ，对于第一种方式的schema其实定义在了case class里面了。<br>官网解读：<br>当我们的case class不能提前定义(因为业务处理的过程当中，你的字段可能是在变化的),因此使用case class很难去提前定义。<br>使用该方式创建DF的三大步骤：</p>
+<ol>
+<li><p>Create an RDD of Rows from the original RDD;</p>
+</li>
+<li><p>Create the schema represented by a StructType matching the structure of Rows in the RDD created in Step 1.</p>
+</li>
+<li><p>Apply the schema to the RDD of Rows via createDataFrame method provided by SparkSession.</p>
+</li>
+</ol>
+<p>示例：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * convert rdd to dataframe 2</span></span><br><span class="line"><span class="comment">  * @param spark</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">runProgrammaticSchemaExample</span></span>(spark:<span class="type">SparkSession</span>): <span class="type">Unit</span> =&#123;</span><br><span class="line">  <span class="comment">// 1.转成RDD</span></span><br><span class="line">  <span class="keyword">val</span> rdd = spark.sparkContext.textFile(<span class="string">"E:/大数据/data/people.txt"</span>)</span><br><span class="line">  <span class="comment">// 2.定义schema，带有StructType的</span></span><br><span class="line">  <span class="comment">// 定义schema信息</span></span><br><span class="line">  <span class="keyword">val</span> schemaString = <span class="string">"name age"</span></span><br><span class="line">  <span class="comment">// 对schema信息按空格进行分割</span></span><br><span class="line">  <span class="comment">// 最终fileds里包含了2个StructField</span></span><br><span class="line">  <span class="keyword">val</span> fields = schemaString.split(<span class="string">" "</span>)</span><br><span class="line">                            <span class="comment">// 字段类型，字段名称判断是不是为空</span></span><br><span class="line">                           .map(fieldName =&gt; <span class="type">StructField</span>(fieldName, <span class="type">StringType</span>, nullable = <span class="literal">true</span>))</span><br><span class="line">  <span class="keyword">val</span> schema = <span class="type">StructType</span>(fields)</span><br><span class="line">  <span class="comment">// 3.把我们的schema信息作用到RDD上</span></span><br><span class="line">  <span class="comment">//   这个RDD里面包含了一些行</span></span><br><span class="line">  <span class="comment">// 形成Row类型的RDD</span></span><br><span class="line">  <span class="keyword">val</span> rowRDD = rdd.map(_.split(<span class="string">","</span>))</span><br><span class="line">                  .map(x =&gt; <span class="type">Row</span>(x(<span class="number">0</span>), x(<span class="number">1</span>).trim))</span><br><span class="line">  <span class="comment">// 通过SparkSession创建一个DataFrame</span></span><br><span class="line">  <span class="comment">// 传进来一个rowRDD和schema，将schema作用到rowRDD上</span></span><br><span class="line">  <span class="keyword">val</span> peopleDF = spark.createDataFrame(rowRDD, schema)</span><br><span class="line">  peopleDF.show()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="生产上创建DataFrame的代码举例"><a href="#生产上创建DataFrame的代码举例" class="headerlink" title="生产上创建DataFrame的代码举例"></a>生产上创建DataFrame的代码举例</h3><p>在实际生产环境中，我们其实选择的是方式二这种进行创建DataFrame的，这里将展示部分代码：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">AccessConvertUtil</span> </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> struct = <span class="type">StructType</span>(</span><br><span class="line">    <span class="type">Array</span>(</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"url"</span>,<span class="type">StringType</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"cmsType"</span>,<span class="type">StringType</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"cmsId"</span>,<span class="type">LongType</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"traffic"</span>,<span class="type">LongType</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"ip"</span>,<span class="type">StringType</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"city"</span>,<span class="type">StringType</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"time"</span>,<span class="type">StringType</span>),</span><br><span class="line">      <span class="type">StructField</span>(<span class="string">"day"</span>,<span class="type">StringType</span>)</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 根据输入的每一行信息转换成输出的样式</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">parseLog</span></span>(log:<span class="type">String</span>) = &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">val</span> splits = log.split(<span class="string">"\t"</span>)</span><br><span class="line">      <span class="keyword">val</span> url = splits(<span class="number">1</span>)</span><br><span class="line">      <span class="keyword">val</span> traffic = splits(<span class="number">2</span>).toLong</span><br><span class="line">      <span class="keyword">val</span> ip = splits(<span class="number">3</span>)</span><br><span class="line">      <span class="keyword">val</span> domain = <span class="string">"http://www.imooc.com/"</span></span><br><span class="line">      <span class="keyword">val</span> cms = url.substring(url.indexOf(domain) + domain.length)</span><br><span class="line">      <span class="keyword">val</span> cmsTypeId = cms.split(<span class="string">"/"</span>)</span><br><span class="line">      <span class="keyword">var</span> cmsType = <span class="string">""</span></span><br><span class="line">      <span class="keyword">var</span> cmsId = <span class="number">0</span>l</span><br><span class="line">      <span class="keyword">if</span> (cmsTypeId.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        cmsType = cmsTypeId(<span class="number">0</span>)</span><br><span class="line">        cmsId = cmsTypeId(<span class="number">1</span>).toLong</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">val</span> city = <span class="type">IpUtils</span>.getCity(ip)</span><br><span class="line">      <span class="keyword">val</span> time = splits(<span class="number">0</span>)</span><br><span class="line">      <span class="keyword">val</span> day = time.substring(<span class="number">0</span>,<span class="number">10</span>).replace(<span class="string">"-"</span>,<span class="string">""</span>)</span><br><span class="line">      <span class="comment">//这个Row里面的字段要和struct中的字段对应上</span></span><br><span class="line">      <span class="type">Row</span>(url, cmsType, cmsId, traffic, ip, city, time, day)</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt; <span class="type">Row</span>(<span class="number">0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建DataFrame</p>
+<figure class="highlight roboconf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">object SparkStatCleanJob &#123;</span><br><span class="line">  <span class="attribute">def main(args</span>: Array[String]): Unit = &#123;</span><br><span class="line">    val spark = SparkSession<span class="variable">.builder</span>()<span class="variable">.appName</span>("SparkStatCleanJob")</span><br><span class="line">      <span class="variable">.master</span>("local[2]")<span class="variable">.getOrCreate</span>()</span><br><span class="line">    val accessRDD = spark<span class="variable">.sparkContext</span><span class="variable">.textFile</span>("/Users/lemon/project/data/access<span class="variable">.log</span>")</span><br><span class="line">    //accessRDD<span class="variable">.take</span>(10)<span class="variable">.foreach</span>(println)</span><br><span class="line">    //RDD ==&gt; DF，创建生成DataFrame</span><br><span class="line">    val accessDF = spark<span class="variable">.createDataFrame</span>(accessRDD<span class="variable">.map</span>(x =&gt; AccessConvertUtil<span class="variable">.parseLog</span>(x)),</span><br><span class="line">      AccessConvertUtil<span class="variable">.struct</span>)</span><br><span class="line">    accessDF<span class="variable">.coalesce</span>(1)<span class="variable">.write</span><span class="variable">.format</span>("parquet")<span class="variable">.mode</span>(SaveMode<span class="variable">.Overwrite</span>)</span><br><span class="line">            <span class="variable">.partitionBy</span>("day")<span class="variable">.save</span>("/Users/lemon/project/clean")</span><br><span class="line">    spark<span class="variable">.stop</span>()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
 
       
-    </p></div>
+    </div>
     <div class="article-info article-info-index">
       
       
@@ -230,16 +245,75 @@
 
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/06/16/Saprk必备技巧之--Spark RDD转DataFrame/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/06/16/Saprk必备技巧之--Spark RDD转DataFrame/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2019/06/15/Spark RDD、DataFrame和DataSet的区别/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Spark RDD、DataFrame和DataSet的区别</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -254,809 +328,32 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Spark RDD、DataFrame和DataSet的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/15/Spark RDD、DataFrame和DataSet的区别/">Spark RDD、DataFrame和DataSet的区别</a>
-    </h1>
-  
-
-        
-        <a href="/2019/06/15/Spark RDD、DataFrame和DataSet的区别/" class="archive-article-date">
-  	<time datetime="2019-06-15T09:30:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>在Spark中，RDD、DataFrame、Dataset是最常用的数据类型，今天谈谈他们的区别！</strong><br>
-        
-          <a class="article-more-a" href="/2019/06/15/Spark RDD、DataFrame和DataSet的区别/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/06/15/Spark RDD、DataFrame和DataSet的区别/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法一"><span class="toc-number">1.</span> <span class="toc-text">方法一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法二"><span class="toc-number">2.</span> <span class="toc-text">方法二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生产上创建DataFrame的代码举例"><span class="toc-number">3.</span> <span class="toc-text">生产上创建DataFrame的代码举例</span></a></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
-  
-    <article id="post-Hive启动报错排坑" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/01/Hive启动报错排坑/">Hive启动报错排坑</a>
-    </h1>
-  
-
-        
-        <a href="/2019/06/01/Hive启动报错排坑/" class="archive-article-date">
-  	<time datetime="2019-06-01T05:26:19.140Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本人因为工作需要搞了一台黑苹果做大数据测试用，因为Mac OS的系统是基于Unix的理论上来说跟Linux是差不多的，所以直接把hadoop, hive, spark等大数据组件直接扔到mac上去剩下一个虚拟机，心里美滋滋，说干就干！！！<br>
-        
-          <a class="article-more-a" href="/2019/06/01/Hive启动报错排坑/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hive</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Mysql</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/06/01/Hive启动报错排坑/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Spark性能优化之二——shuffleManager(HashShuffle)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/">Spark性能优化之二——shuffleManager(HashShuffle)</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/" class="archive-article-date">
-  	<time datetime="2019-05-25T08:11:01.142Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Shuffle过程被称作分布式系统的魔法操作，这个过程可以说是研究分布式计算，绕不过去的一个地方，它也是分布式系统的天敌，性能的杀手！<br>
-        
-          <a class="article-more-a" href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/25/Spark性能优化之二——shuffleManager(HashShuffle)/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Azkaban调度框架的介绍与部署" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/21/Azkaban调度框架的介绍与部署/">Azkaban调度框架的介绍与部署</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/21/Azkaban调度框架的介绍与部署/" class="archive-article-date">
-  	<time datetime="2019-05-21T08:51:16.137Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>做大数据（其实做任何系统）不可能有程序猿无时不刻的盯着程序跑，所以必定需要有个调度框架来实现作业的调度，今天就来介绍一个开元的大数据调度框架Azkanban<br>
-        
-          <a class="article-more-a" href="/2019/05/21/Azkaban调度框架的介绍与部署/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Azkaban</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/21/Azkaban调度框架的介绍与部署/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Spark性能优化之一——Kryo序列化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/20/Spark性能优化之一——Kryo序列化/">Spark性能优化之一——Kryo序列化</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/20/Spark性能优化之一——Kryo序列化/" class="archive-article-date">
-  	<time datetime="2019-05-19T18:02:09.528Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Spark默认是使用Java的序列化，但是官网建议使用Kryo序列化方式，本篇就对Kryo序列化做一次分析</p>
-<p>官方地址：<a href="http://spark.apache.org/docs/latest/tuning.html#data-serialization" target="_blank" rel="noopener">http://spark.apache.org/docs/latest/tuning.html#data-serialization</a><br>
-        
-          <a class="article-more-a" href="/2019/05/20/Spark性能优化之一——Kryo序列化/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/20/Spark性能优化之一——Kryo序列化/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-搭建Spark环境--编译对应版本Spark" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/05/搭建Spark环境--编译对应版本Spark/">搭建Spark环境--编译对应版本Spark</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/05/搭建Spark环境--编译对应版本Spark/" class="archive-article-date">
-  	<time datetime="2019-05-05T07:26:43.935Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>众所周知，Spark是当下大数据方向最流行的计算框架，我们使用Spark可以做到一站式的大数据服务，我们今天就来扯一下Spark是如何来搭建环境的。<br>
-        
-          <a class="article-more-a" href="/2019/05/05/搭建Spark环境--编译对应版本Spark/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/05/搭建Spark环境--编译对应版本Spark/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux环境搭建Shadowsocks科学上网" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/28/Linux环境搭建Shadowsocks科学上网/">Linux环境搭建Shadowsocks科学上网</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/28/Linux环境搭建Shadowsocks科学上网/" class="archive-article-date">
-  	<time datetime="2019-04-28T02:08:41.334Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>用maven编译时，maven会根据pom.xml去对应的网站现在依赖包，在公司里编译感觉不出有什么问题，因为公司都是用了maven私服所有下载的速度比较快，编译很快，但是在自己家里如果要搭建Hadoop或者Spark我们都需要去公网下载大量的依赖包，如果不会使用科学上网很有可能就会编译失败，就算成功时间也会特别长，今天就来写一下在linux环境下搭建科学上网的教程<br>
-        
-          <a class="article-more-a" href="/2019/04/28/Linux环境搭建Shadowsocks科学上网/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Shadowsocks</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/28/Linux环境搭建Shadowsocks科学上网/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-UDF修改hive源代码" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/20/UDF修改hive源代码/">UDF修改hive源代码</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/20/UDF修改hive源代码/" class="archive-article-date">
-  	<time datetime="2019-04-20T09:03:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在我们的公司里，会有一个专门的UDF小组，专门用来添加一些功能，hive的官网是有介绍如何添加临时的UDF还有添加永久的UDF这些在这里也就都不介绍了！本章我们就来说，如果通过修改源码的方式，来实现UDF<br>
-        
-          <a class="article-more-a" href="/2019/04/20/UDF修改hive源代码/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hive</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/20/UDF修改hive源代码/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Hue安装教程-Hive的使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/16/Hue安装教程-Hive的使用/">Hue安装教程-Hive的使用</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/16/Hue安装教程-Hive的使用/" class="archive-article-date">
-  	<time datetime="2019-04-16T14:13:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Hue是一个开源的Apache Hadoop UI系统，由Cloudera Desktop演化而来，最后Cloudera公司将其贡献给Apache基金会的Hadoop社区，它是基于Python Web框架Django实现的。<br>
-        
-          <a class="article-more-a" href="/2019/04/16/Hue安装教程-Hive的使用/#more">more >></a>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Hue</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hive</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/16/Hue安装教程-Hive的使用/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -1079,8 +376,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
