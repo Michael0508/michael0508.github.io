@@ -6,23 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>shell编程之写Email | 超悦的博客</title>
+  <title>mac os 10.14 之后取消4位数密码限制 设置一位数密码 | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！">
-<meta name="keywords" content="Shell">
+  <meta name="description" content="Mac os 10.14以后默认的开机密码必须要4位以上，很烦人，怎么解除这个限制呢？">
+<meta name="keywords" content="Mac">
 <meta property="og:type" content="article">
-<meta property="og:title" content="shell编程之写Email">
-<meta property="og:url" content="https://micheal0508.github.io/2019/04/13/shell编程之写Email/index.html">
+<meta property="og:title" content="mac os 10.14 之后取消4位数密码限制 设置一位数密码">
+<meta property="og:url" content="https://micheal0508.github.io/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！">
+<meta property="og:description" content="Mac os 10.14以后默认的开机密码必须要4位以上，很烦人，怎么解除这个限制呢？">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://micheal0508.github.io/images/shell_mail_01.png">
-<meta property="og:image" content="https://micheal0508.github.io/images/shell_mail_02.png">
-<meta property="og:updated_time" content="2019-04-13T08:56:32.000Z">
+<meta property="og:updated_time" content="2019-07-13T03:07:15.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="shell编程之写Email">
-<meta name="twitter:description" content="前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！">
-<meta name="twitter:image" content="https://micheal0508.github.io/images/shell_mail_01.png">
+<meta name="twitter:title" content="mac os 10.14 之后取消4位数密码限制 设置一位数密码">
+<meta name="twitter:description" content="Mac os 10.14以后默认的开机密码必须要4位以上，很烦人，怎么解除这个限制呢？">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -176,52 +173,32 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-shell编程之写Email" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-mac os 10.14 之后取消4位数密码限制 设置一位数密码" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      shell编程之写Email
+      mac os 10.14 之后取消4位数密码限制 设置一位数密码
     </h1>
   
 
         
-        <a href="/2019/04/13/shell编程之写Email/" class="archive-article-date">
-  	<time datetime="2019-04-13T00:51:30.629Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-13</time>
+        <a href="/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/" class="archive-article-date">
+  	<time datetime="2019-07-12T19:03:58.702Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-13</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>前面一篇blog写了linux的shell脚本编程的基础，本篇blog就来玩一点有好玩的，利用sh脚本来发邮件，是不是很有趣呢？那下面就开始吧！！！<br><a id="more"></a></p>
-<h3 id="安装sendmail（基于CentOS）"><a href="#安装sendmail（基于CentOS）" class="headerlink" title="安装sendmail（基于CentOS）"></a>安装sendmail（基于CentOS）</h3><p><strong>敲黑板避坑：请全部使用root用户操作</strong><br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> -y sendmail sendmail-rc</span><br></pre></td></tr></table></figure></p>
-<p>测试是否可以开启sendmail</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service sendmail start</span><br><span class="line"></span><br><span class="line"><span class="keyword">ps</span> -ef | <span class="keyword">grep</span> sendmail</span><br></pre></td></tr></table></figure>
-<p>如果ok说明已经安装完成了</p>
-<h3 id="关闭机器的SENDMAIL服务并开启postfix"><a href="#关闭机器的SENDMAIL服务并开启postfix" class="headerlink" title="关闭机器的SENDMAIL服务并开启postfix"></a>关闭机器的SENDMAIL服务并开启postfix</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service sendmail stop</span><br><span class="line">service postfix start</span><br><span class="line">chkconfig postfix on     #使得postfix开机自启动</span><br></pre></td></tr></table></figure>
-<h3 id="创建证书文件（当然是发邮件的证书喽，后面要用到）"><a href="#创建证书文件（当然是发邮件的证书喽，后面要用到）" class="headerlink" title="创建证书文件（当然是发邮件的证书喽，后面要用到）"></a>创建证书文件（当然是发邮件的证书喽，后面要用到）</h3><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="string">/root/.certs/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> -n | openssl s_client -connect smtp.qq.com<span class="function">:465</span> | sed -ne '<span class="string">/-BEGIN</span> CERTIFICATE-/,<span class="string">/-END</span> CERTIFICATE-<span class="string">/p</span>' &gt; ~<span class="string">/.certs/qq.crt</span></span><br><span class="line"></span><br><span class="line">certutil -A -n <span class="string">"GeoTrust SSL CA"</span> -t <span class="string">"C,,"</span> -d ~<span class="string">/.certs</span> -i ~<span class="string">/.certs/qq.crt</span></span><br><span class="line"></span><br><span class="line">certutil -A -n <span class="string">"GeoTrust Global CA"</span> -t <span class="string">"C,,"</span> -d ~<span class="string">/.certs</span> -i ~<span class="string">/.certs/qq.crt</span></span><br><span class="line"></span><br><span class="line">certutil -L -d <span class="string">/root/.certs</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">cd</span> <span class="string">/root/.certs</span> </span><br><span class="line"></span><br><span class="line">certutil -A -n <span class="string">"GeoTrust SSL CA - G3"</span> -t <span class="string">"Pu,Pu,Pu"</span> -d <span class="string">./</span> -i qq.crt</span><br></pre></td></tr></table></figure>
-<p>就是创建了证书</p>
-<h3 id="去QQ邮箱创建SMTP授权码"><a href="#去QQ邮箱创建SMTP授权码" class="headerlink" title="去QQ邮箱创建SMTP授权码"></a>去QQ邮箱创建SMTP授权码</h3><p><img src="/images/shell_mail_01.png" alt></p>
-<p><img src="/images/shell_mail_02.png" alt></p>
-<h3 id="在-etc-mail-rc-文件末尾添加以下"><a href="#在-etc-mail-rc-文件末尾添加以下" class="headerlink" title="在/etc/mail.rc 文件末尾添加以下"></a>在/etc/mail.rc 文件末尾添加以下</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">set</span> <span class="attribute">from</span>=879355400@qq.com</span><br><span class="line"><span class="builtin-name">set</span> <span class="attribute">smtp</span>=smtp.qq.com</span><br><span class="line"><span class="builtin-name">set</span> <span class="attribute">smtp-auth-user</span>=879355400</span><br><span class="line"><span class="comment">#授权码</span></span><br><span class="line"><span class="builtin-name">set</span> <span class="attribute">smtp-auth-password</span>=xxxxxxxxxxxxxxxx  #这里添加上一步生成的16位授权码</span><br><span class="line"><span class="builtin-name">set</span> <span class="attribute">smtp-auth</span>=login</span><br><span class="line"><span class="builtin-name">set</span> smtp-use-starttls</span><br><span class="line"><span class="builtin-name">set</span> <span class="attribute">ssl-verify</span>=ignore</span><br><span class="line"><span class="builtin-name">set</span> <span class="attribute">nss-config-dir</span>=/root/.certs   #这里的路径就是生成证书的路径</span><br></pre></td></tr></table></figure>
-<h3 id="测试邮件是否可以发送成功"><a href="#测试邮件是否可以发送成功" class="headerlink" title="测试邮件是否可以发送成功"></a>测试邮件是否可以发送成功</h3><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">echo</span> hello word | mail -s <span class="string">" test01"</span> <span class="number">879355400</span><span class="variable">@qq</span>.com</span><br></pre></td></tr></table></figure>
-<p>如果都是按照上面的步骤来的话，这里发送应该已经成功了，去邮箱中查收一下自己有没有收到邮件吧！</p>
-<h3 id="写shell脚本来发送来发送邮件（不带附件）"><a href="#写shell脚本来发送来发送邮件（不带附件）" class="headerlink" title="写shell脚本来发送来发送邮件（不带附件）"></a>写shell脚本来发送来发送邮件（不带附件）</h3><p>结合上篇blog说的，shell脚本其实就是命令行的封装，我们就写一个简单的脚本文件来代替直接打命令来搞定这个！<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop000 shell]<span class="comment"># cat sendmailwithoutfile.sh </span></span><br><span class="line"><span class="meta">#!/bin/bash </span></span><br><span class="line"></span><br><span class="line">JOB_NAME=<span class="string">"TEST"</span></span><br><span class="line">FROM_EMAIL=<span class="string">"879355400@qq.com"</span></span><br><span class="line">TO_EMAIL=<span class="string">"879355400@qq.com"</span></span><br><span class="line"></span><br><span class="line">RUNNINGNUM=1</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">"`date "</span>+%Y-%m-%d %H:%M:%S<span class="string">"` : The current running <span class="variable">$JOB_NAME</span> job num is <span class="variable">$RUNNINGNUM</span> in 192.168.137.201 ......"</span> | mail \</span><br><span class="line">-r <span class="string">"From: alertAdmin &lt;<span class="variable">$&#123;FROM_EMAIL&#125;</span>&gt;"</span> \</span><br><span class="line">-s <span class="string">"Warn: Skip the new <span class="variable">$JOB_NAME</span> spark job."</span> <span class="variable">$&#123;TO_EMAIL&#125;</span></span><br></pre></td></tr></table></figure></p>
-<ol>
-<li>-r代表发送者要带上From: alertAdmin在前面哦，否则会报错的，但是如果你的mail.rc文件里只有一个mail的设置，这个是可以省略的。</li>
-<li>-e则是你的邮件内容，直接echo在前</li>
-<li>-s测试邮件的title</li>
-<li>最后空格带一个邮箱代表接受者</li>
-</ol>
-<h3 id="发一个带个附件的邮件"><a href="#发一个带个附件的邮件" class="headerlink" title="发一个带个附件的邮件"></a>发一个带个附件的邮件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop000 shell]<span class="comment"># cat sendmailwithfile.sh </span></span><br><span class="line"><span class="meta">#!/bin/bash </span></span><br><span class="line"></span><br><span class="line">FROM_EMAIL=<span class="string">"879355400@qq.com"</span></span><br><span class="line">TO_EMAIL=<span class="string">"879355400@qq.com"</span></span><br><span class="line"></span><br><span class="line">LOG=/root/shell/果壳中的宇宙.pdf</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">"`date "</span>+%Y-%m-%d %H:%M:%S<span class="string">"` :&lt;/br&gt; 来来来，看一下，这本书(test01)"</span> | mailx \</span><br><span class="line">-a <span class="variable">$&#123;LOG&#125;</span> \</span><br><span class="line">-s <span class="string">"介绍一本好看的书"</span> <span class="variable">$&#123;TO_EMAIL&#125;</span></span><br></pre></td></tr></table></figure>
-<ol>
-<li>mailx是mail的增强版，功能更多，但是在这里用mail其实也是可以的</li>
-<li>-a后面就是要发送的附件路径</li>
-</ol>
-<p>好了，用这个骚操作去发给你们想法的人邮件吧！</p>
+        <p>Mac os 10.14以后默认的开机密码必须要4位以上，很烦人，怎么解除这个限制呢？</p>
+<a id="more"></a>
+<p>默认最低4位数密码。改为1位数密码。</p>
+<p>打开终端输入：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">pwpolicy -clearaccountpolicies</span></span><br></pre></td></tr></table></figure>
+<p>然后到设置里面去就可以设置4位以下的密码啦，方便！！！！</p>
 
       
 
@@ -235,7 +212,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Shell</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Mac</a>
         		</li>
       		
 		</ul>
@@ -247,7 +224,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/教程//" class="article-tag-list-link color3">教程</a>
+        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
         		</li>
       		
 		</ul>
@@ -302,7 +279,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/04/13/shell编程之写Email/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -316,18 +293,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/04/16/hadoop高阶之Lzo压缩分片/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          hadoop高阶之Lzo压缩分片
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/04/12/shell编程基础/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">shell编程基础</div>
+    <a href="/2019/06/16/Saprk必备技巧之--Spark RDD转DataFrame/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Saprk必备技巧之--Spark RDD转DataFrame</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -354,7 +322,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装sendmail（基于CentOS）"><span class="toc-number">1.</span> <span class="toc-text">安装sendmail（基于CentOS）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭机器的SENDMAIL服务并开启postfix"><span class="toc-number">2.</span> <span class="toc-text">关闭机器的SENDMAIL服务并开启postfix</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建证书文件（当然是发邮件的证书喽，后面要用到）"><span class="toc-number">3.</span> <span class="toc-text">创建证书文件（当然是发邮件的证书喽，后面要用到）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#去QQ邮箱创建SMTP授权码"><span class="toc-number">4.</span> <span class="toc-text">去QQ邮箱创建SMTP授权码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在-etc-mail-rc-文件末尾添加以下"><span class="toc-number">5.</span> <span class="toc-text">在/etc/mail.rc 文件末尾添加以下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试邮件是否可以发送成功"><span class="toc-number">6.</span> <span class="toc-text">测试邮件是否可以发送成功</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#写shell脚本来发送来发送邮件（不带附件）"><span class="toc-number">7.</span> <span class="toc-text">写shell脚本来发送来发送邮件（不带附件）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#发一个带个附件的邮件"><span class="toc-number">8.</span> <span class="toc-text">发一个带个附件的邮件</span></a></li></ol>
+                    目录，不存在的…
                     </div>
                 </span>
             </div>
