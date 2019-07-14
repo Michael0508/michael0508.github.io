@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Tag: Mac | 超悦的博客</title>
+  <title>Spark性能优化之三—ShuffleManager（SortShuffle） | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦的博客">
-<meta property="og:url" content="https://micheal0508.github.io/tags/Mac/index.html">
+  <meta name="description" content="一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！">
+<meta name="keywords" content="spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark性能优化之三—ShuffleManager（SortShuffle）">
+<meta property="og:url" content="https://micheal0508.github.io/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://micheal0508.github.io/images/Spark_SortShuffle01.jpg">
+<meta property="og:image" content="https://micheal0508.github.io/images/Spark_SortShuffle02.jpg">
+<meta property="og:updated_time" content="2019-07-14T14:32:12.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦的博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="Spark性能优化之三—ShuffleManager（SortShuffle）">
+<meta name="twitter:description" content="一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！">
+<meta name="twitter:image" content="https://micheal0508.github.io/images/Spark_SortShuffle01.jpg">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -171,71 +176,183 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Spark性能优化之三—ShuffleManager（SortShuffle）" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/" class="archive-article-date">
-  	<time datetime="2019-07-12T19:03:58.702Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-13</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/">mac os 10.14 之后取消4位数密码限制 设置一位数密码</a>
+    <h1 class="article-title" itemprop="name">
+      Spark性能优化之三—ShuffleManager（SortShuffle）
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/" class="archive-article-date">
+  	<time datetime="2019-07-14T06:27:25.925Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！</p>
+<a id="more"></a>
+<p>事实上在这段面试的过程中，不止一次的被问到Spark的SortShuffle到底是说明，官方为什么要用SortShuffle来代替HashShuffle呢？这个blog博客我早就想写了，这是这段时间找工作比较烦懒得写了，现在要沉下新来好好看看了！！！！</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>在Spark1.2版本之后，<strong>出现了SortShuffle，这种方式以更少的中间磁盘文件产生而远远优于HashShuffle</strong>。而它的运行机制主要分为两种。一种为普通机制，另一种为bypass机制。而bypass机制的启动条件为，当shuffle read task的数量小于等于spark.shuffle.sort.bypassMergeThreshold参数的值时（默认为200），就会启用bypass机制。即当read task不是那么多的时候，采用bypass机制是更好的选择。</p>
+<h5 id="普通运行机制"><a href="#普通运行机制" class="headerlink" title="普通运行机制"></a>普通运行机制</h5><p>在该模式下，数据会先写入一个数据结构，聚合算子写入Map，一边通过Map局部聚合，一遍写入内存。Join算子写入ArrayList直接写入内存中。然后需要判断是否达到阈值，如果达到就会将内存数据结构的数据写入到磁盘，清空内存数据结构。</p>
+<p>在溢写磁盘前，先根据key进行排序，排序过后的数据，会分批写入到磁盘文件中。默认批次为10000条，数据会以每批一万条写入到磁盘文件（flush）。写入磁盘文件通过缓冲区溢写的方式，每次溢写都会产生一个磁盘文件，也就是说一个task过程会产生多个临时文件。</p>
+<p>最后在每个task中，将所有的临时文件合并，这就是merge过程，此过程将所有临时文件读取出来，一次写入到最终文件。意味着一个task的所有数据都在这一个文件中。同时单独写一份索引文件，标识下游各个task的数据在文件中的索引，start offset和end offset。</p>
+<p>这样算来如果第一个stage 50个task，每个Executor执行一个task，那么无论下游有几个task，就需要50个磁盘文件。</p>
+<p><img src="/images/Spark_SortShuffle01.jpg" alt></p>
+<h5 id="bypass机制"><a href="#bypass机制" class="headerlink" title="bypass机制"></a>bypass机制</h5><p>bypass机制运行条件：</p>
+<p>shuffle map task数量小于spark.shuffle.sort.bypassMergeThreshold参数的值。<br>不是聚合类的shuffle算子（比如reduceByKey）。<br>在这种机制下，当前stage的task会为每个下游的task都创建临时磁盘文件。将数据按照key值进行hash，然后根据hash值，将key写入对应的磁盘文件中（个人觉得这也相当于一次另类的排序，将相同的key放在一起了）。最终，同样会将所有临时文件依次合并成一个磁盘文件，建立索引。</p>
+<p>该机制与未优化的hashshuffle相比，没有那么多磁盘文件，下游task的read操作相对性能会更好。</p>
+<p>该机制与sortshuffle的普通机制相比，在readtask不多的情况下，首先写的机制是不同，其次不会进行排序。这样就可以节约一部分性能开销。 </p>
+<p><img src="/images/Spark_SortShuffle02.jpg" alt></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Mac</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">spark</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
+        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">mac os 10.14 之后取消4位数密码限制 设置一位数密码</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#普通运行机制"><span class="toc-number">1.1.</span> <span class="toc-text">普通运行机制</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#bypass机制"><span class="toc-number">1.2.</span> <span class="toc-text">bypass机制</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -258,9 +375,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
