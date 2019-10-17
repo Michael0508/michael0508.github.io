@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Archives: 2019/7 | 超悦的博客</title>
+  <title>生产Spark+Hive会遇见的拦路虎 | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录与分享生产学习中的问题">
-<meta property="og:type" content="website">
-<meta property="og:title" content="超悦的博客">
-<meta property="og:url" content="https://micheal0508.github.io/archives/2019/07/index.html">
+  <meta name="description" content="1.抛错: Unable to instantiate SparkSession with Hive support because Hive classes are not found.需要先将hadoop的core-site.xml，hive的hive-site.xml拷贝到project中 1.1 测试代码12345678910def main(args: Array[String]): U">
+<meta name="keywords" content="Hive,Spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="生产Spark+Hive会遇见的拦路虎">
+<meta property="og:url" content="https://micheal0508.github.io/2019/10/17/生产Spark+Hive会遇见的拦路虎/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="记录与分享生产学习中的问题">
+<meta property="og:description" content="1.抛错: Unable to instantiate SparkSession with Hive support because Hive classes are not found.需要先将hadoop的core-site.xml，hive的hive-site.xml拷贝到project中 1.1 测试代码12345678910def main(args: Array[String]): U">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-17T03:34:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="超悦的博客">
-<meta name="twitter:description" content="记录与分享生产学习中的问题">
+<meta name="twitter:title" content="生产Spark+Hive会遇见的拦路虎">
+<meta name="twitter:description" content="1.抛错: Unable to instantiate SparkSession with Hive support because Hive classes are not found.需要先将hadoop的core-site.xml，hive的hive-site.xml拷贝到project中 1.1 测试代码12345678910def main(args: Array[String]): U">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -171,36 +173,47 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-生产Spark+Hive会遇见的拦路虎" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/07/21/编写UDF的详细步骤/" class="archive-article-date">
-  	<time datetime="2019-07-21T01:38:46.195Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-21</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/07/21/编写UDF的详细步骤/">编写UDF的详细步骤</a>
+    <h1 class="article-title" itemprop="name">
+      生产Spark+Hive会遇见的拦路虎
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/10/17/生产Spark+Hive会遇见的拦路虎/" class="archive-article-date">
+  	<time datetime="2019-10-16T19:33:40.687Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="1-抛错-Unable-to-instantiate-SparkSession-with-Hive-support-because-Hive-classes-are-not-found"><a href="#1-抛错-Unable-to-instantiate-SparkSession-with-Hive-support-because-Hive-classes-are-not-found" class="headerlink" title="1.抛错: Unable to instantiate SparkSession with Hive support because Hive classes are not found."></a>1.抛错: Unable to instantiate SparkSession with Hive support because Hive classes are not found.</h4><p>需要先将hadoop的core-site.xml，hive的hive-site.xml拷贝到project中</p>
+<h5 id="1-1-测试代码"><a href="#1-1-测试代码" class="headerlink" title="1.1 测试代码"></a>1.1 测试代码</h5><figure class="highlight roboconf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def main(args: Array[String]): Unit = &#123;</span><br><span class="line">    <span class="attribute">val spark</span>: SparkSession = SparkSession</span><br><span class="line">      <span class="variable">.builder</span>()</span><br><span class="line">      <span class="variable">.appName</span>("justTest")</span><br><span class="line">      <span class="variable">.master</span>("local[2]")</span><br><span class="line">      <span class="variable">.enableHiveSupport</span>()</span><br><span class="line">      <span class="variable">.getOrCreate</span>()</span><br><span class="line">    val userClickDF = spark<span class="variable">.table</span>("user_click")</span><br><span class="line">    userClickDF<span class="variable">.show</span>(10)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="1-2-报错"><a href="#1-2-报错" class="headerlink" title="1.2 报错"></a>1.2 报错</h5><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread <span class="string">"main"</span> java<span class="selector-class">.lang</span><span class="selector-class">.IllegalArgumentException</span>: Unable to instantiate SparkSession with Hive support because Hive classes are not found.</span><br><span class="line">    at org<span class="selector-class">.apache</span><span class="selector-class">.spark</span><span class="selector-class">.sql</span><span class="selector-class">.SparkSession</span><span class="variable">$Builder</span>.enableHiveSupport(SparkSession<span class="selector-class">.scala</span>:<span class="number">869</span>)</span><br><span class="line">    at homework0522.OverwriteTopN$.main(OverwriteTopN<span class="selector-class">.scala</span>:<span class="number">12</span>)</span><br><span class="line">    at homework0522<span class="selector-class">.OverwriteTopN</span><span class="selector-class">.main</span>(OverwriteTopN.scala)</span><br></pre></td></tr></table></figure>
+<h5 id="1-3-查看源码"><a href="#1-3-查看源码" class="headerlink" title="1.3 查看源码"></a>1.3 查看源码</h5><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"SparkSession.scala"</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Enables Hive support, including connectivity to a persistent Hive metastore, support for</span></span><br><span class="line"><span class="comment">     * Hive serdes, and Hive user-defined functions.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 2.0.0</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> enableHiveSupport(): Builder = <span class="keyword">synchronized</span> &#123;</span><br><span class="line">      <span class="string">"在这里进行if判断的时候找不到hive class"</span></span><br><span class="line">      <span class="keyword">if</span> (hiveClassesArePresent) &#123;</span><br><span class="line">        config(CATALOG_IMPLEMENTATION.key, <span class="string">"hive"</span>)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">          <span class="string">"Unable to instantiate SparkSession with Hive support because "</span> +</span><br><span class="line">            <span class="string">"Hive classes are not found."</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> true if Hive classes can be loaded, otherwise false.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span>[spark] <span class="keyword">def</span> <span class="string">hiveClassesArePresent:</span> Boolean = &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="string">"这里通过Class.forName去找下面的两个类，第一个类的时候就找不到了"</span></span><br><span class="line">      Utils.classForName(HIVE_SESSION_STATE_BUILDER_CLASS_NAME)</span><br><span class="line">      Utils.classForName(<span class="string">"org.apache.hadoop.hive.conf.HiveConf"</span>)</span><br><span class="line">      <span class="literal">true</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">_:</span> ClassNotFoundException | <span class="string">_:</span> NoClassDefFoundError =&gt; <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="1-4-发现找不到HiveSessionStateBuilder"><a href="#1-4-发现找不到HiveSessionStateBuilder" class="headerlink" title="1.4 发现找不到HiveSessionStateBuilder"></a>1.4 发现找不到HiveSessionStateBuilder</h5><figure class="highlight fsharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> HIVE_SESSION_STATE_BUILDER_CLASS_NAME =</span><br><span class="line">    <span class="string">"org.apache.spark.sql.hive.HiveSessionStateBuilder"</span></span><br></pre></td></tr></table></figure>
+<h5 id="1-5-解决方法"><a href="#1-5-解决方法" class="headerlink" title="1.5 解决方法"></a>1.5 解决方法</h5><p>将$HIVEHOME/lib下的spark-hive2.11-2.4.2.jar与spark-hive-thriftserver_2.11-2.4.2.jar添加到project中。</p>
+<h4 id="2-继续报错-java-lang-NoSuchFieldError-METASTORECLIENTSOCKET-LIFETIME"><a href="#2-继续报错-java-lang-NoSuchFieldError-METASTORECLIENTSOCKET-LIFETIME" class="headerlink" title="2.继续报错: java.lang.NoSuchFieldError: METASTORECLIENTSOCKET_LIFETIME"></a>2.继续报错: java.lang.NoSuchFieldError: METASTORECLIENTSOCKET_LIFETIME</h4><h5 id="2-1-错误"><a href="#2-1-错误" class="headerlink" title="2.1 错误"></a>2.1 错误</h5><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread <span class="string">"main"</span> java<span class="selector-class">.lang</span><span class="selector-class">.NoSuchFieldError</span>: METASTORE_CLIENT_SOCKET_LIFETIME</span><br><span class="line">    at org<span class="selector-class">.apache</span><span class="selector-class">.spark</span><span class="selector-class">.sql</span><span class="selector-class">.hive</span><span class="selector-class">.HiveUtils</span>$.formatTimeVarsForHiveClient(HiveUtils<span class="selector-class">.scala</span>:<span class="number">194</span>)</span><br><span class="line">    at org<span class="selector-class">.apache</span><span class="selector-class">.spark</span><span class="selector-class">.sql</span><span class="selector-class">.hive</span><span class="selector-class">.HiveUtils</span>$.newClientForMetadata(HiveUtils<span class="selector-class">.scala</span>:<span class="number">285</span>)</span><br><span class="line">    at org<span class="selector-class">.apache</span><span class="selector-class">.spark</span><span class="selector-class">.sql</span><span class="selector-class">.hive</span><span class="selector-class">.HiveExternalCatalog</span><span class="selector-class">.client</span><span class="variable">$lzycompute</span>(HiveExternalCatalog<span class="selector-class">.scala</span>:<span class="number">66</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="2-2-查看源码"><a href="#2-2-查看源码" class="headerlink" title="2.2 查看源码"></a>2.2 查看源码</h5><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"HiveUtils.scala"</span></span><br><span class="line">  /**</span><br><span class="line">   * Change <span class="built_in">time</span> configurations needed to <span class="built_in">create</span> a <span class="string">[[HiveClient]]</span> into unified <span class="string">[[Long]]</span> <span class="built_in">format</span>.</span><br><span class="line">   */</span><br><span class="line">  private[hive] def formatTimeVarsForHiveClient(hadoopConf: Configuration): Map[String, String] = &#123;</span><br><span class="line">    // Hive <span class="number">0.14</span><span class="number">.0</span> introduces timeout operations <span class="keyword">in</span> HiveConf, <span class="keyword">and</span> changes default values of a bunch</span><br><span class="line">    // of <span class="built_in">time</span> `ConfVar`s by adding <span class="built_in">time</span> suffixes (`s`, `ms`, <span class="keyword">and</span> `d` etc.).  This breaks backwards-</span><br><span class="line">    // compatibility when users are trying to connecting to a Hive metastore of <span class="built_in">lower</span> version,</span><br><span class="line">    // because these options are expected to be integral values <span class="keyword">in</span> <span class="built_in">lower</span> versions of Hive.</span><br><span class="line">    //</span><br><span class="line">    // Here we enumerate all <span class="built_in">time</span> `ConfVar`s <span class="keyword">and</span> convert their values to numeric strings according</span><br><span class="line">    // to their <span class="built_in">output</span> <span class="built_in">time</span> units.</span><br><span class="line">    Seq(</span><br><span class="line">      ConfVars.METASTORE_CLIENT_CONNECT_RETRY_DELAY -&gt; TimeUnit.SECONDS,</span><br><span class="line">      ConfVars.METASTORE_CLIENT_SOCKET_TIMEOUT -&gt; TimeUnit.SECONDS,</span><br><span class="line">      <span class="string">"在这里读不到值"</span></span><br><span class="line">      ConfVars.METASTORE_CLIENT_SOCKET_LIFETIME -&gt; TimeUnit.SECONDS,</span><br><span class="line">      ...</span><br><span class="line">    ).map &#123; case (confVar, unit) =&gt;</span><br><span class="line">      confVar.varname -&gt; HiveConf.getTimeVar(hadoopConf, confVar, unit).toString</span><br><span class="line">    &#125;.toMap</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">进入ConfVars</span><br><span class="line"><span class="string">"HiveConf.java"</span></span><br><span class="line">public static enum ConfVars &#123;</span><br><span class="line">        SCRIPTWRAPPER(<span class="string">"hive.exec.script.wrapper"</span>, (Object)null, <span class="string">""</span>),</span><br><span class="line">        PLAN(<span class="string">"hive.exec.plan"</span>, <span class="string">""</span>, <span class="string">""</span>),</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+<p><strong>发现ConfVars中定义的变量并没有METASTORECLIENTSOCKET_LIFETIME，而HiveConf.java来自于hive-exec-1.1.0-cdh5.7.0.jar，即证明hive1.1.0中并没有假如该参数。</strong></p>
+<h5 id="2-3-解决方法"><a href="#2-3-解决方法" class="headerlink" title="2.3 解决方法"></a>2.3 解决方法</h5><p>将hive依赖换为1.2.1</p>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span></span><br><span class="line"><span class="xml">  ...</span></span><br><span class="line"><span class="xml">  <span class="comment">&lt;!-- &lt;hive.version&gt;1.1.0-cdh5.7.0&lt;/hive.version&gt; --&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">hive.version</span>&gt;</span>1.2.1<span class="tag">&lt;/<span class="name">hive.version</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">...</span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hive<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hive-exec<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>$</span><span class="template-variable">&#123;hive.version&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="3-继续报错-Could-not-connect-to-meta-store"><a href="#3-继续报错-Could-not-connect-to-meta-store" class="headerlink" title="3.继续报错: Could not connect to meta store"></a>3.继续报错: Could not connect to meta store</h4><h5 id="3-1-抛错"><a href="#3-1-抛错" class="headerlink" title="3.1 抛错"></a>3.1 抛错</h5><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Exception</span> <span class="selector-tag">in</span> <span class="selector-tag">thread</span> "<span class="selector-tag">main</span>" <span class="selector-tag">org</span><span class="selector-class">.apache</span><span class="selector-class">.spark</span><span class="selector-class">.sql</span><span class="selector-class">.AnalysisException</span>: <span class="selector-tag">java</span><span class="selector-class">.lang</span><span class="selector-class">.RuntimeException</span>: <span class="selector-tag">java</span><span class="selector-class">.lang</span><span class="selector-class">.RuntimeException</span>: <span class="selector-tag">Unable</span> <span class="selector-tag">to</span> <span class="selector-tag">instantiate</span> <span class="selector-tag">org</span><span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hive</span><span class="selector-class">.ql</span><span class="selector-class">.metadata</span><span class="selector-class">.SessionHiveMetaStoreClient</span>;</span><br><span class="line"><span class="selector-tag">Caused</span> <span class="selector-tag">by</span>: <span class="selector-tag">java</span><span class="selector-class">.lang</span><span class="selector-class">.RuntimeException</span>: <span class="selector-tag">java</span><span class="selector-class">.lang</span><span class="selector-class">.RuntimeException</span>: <span class="selector-tag">Unable</span> <span class="selector-tag">to</span> <span class="selector-tag">instantiate</span> <span class="selector-tag">org</span><span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hive</span><span class="selector-class">.ql</span><span class="selector-class">.metadata</span><span class="selector-class">.SessionHiveMetaStoreClient</span></span><br><span class="line"><span class="selector-tag">Caused</span> <span class="selector-tag">by</span>: <span class="selector-tag">java</span><span class="selector-class">.lang</span><span class="selector-class">.RuntimeException</span>: <span class="selector-tag">Unable</span> <span class="selector-tag">to</span> <span class="selector-tag">instantiate</span> <span class="selector-tag">org</span><span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hive</span><span class="selector-class">.ql</span><span class="selector-class">.metadata</span><span class="selector-class">.SessionHiveMetaStoreClient</span></span><br><span class="line"><span class="selector-tag">Caused</span> <span class="selector-tag">by</span>: <span class="selector-tag">java</span><span class="selector-class">.lang</span><span class="selector-class">.reflect</span><span class="selector-class">.InvocationTargetException</span></span><br><span class="line"><span class="selector-tag">Caused</span> <span class="selector-tag">by</span>: <span class="selector-tag">MetaException</span>(<span class="selector-tag">message</span><span class="selector-pseudo">:Could</span> <span class="selector-tag">not</span> <span class="selector-tag">connect</span> <span class="selector-tag">to</span> <span class="selector-tag">meta</span> <span class="selector-tag">store</span> <span class="selector-tag">using</span> <span class="selector-tag">any</span> <span class="selector-tag">of</span> <span class="selector-tag">the</span> <span class="selector-tag">URIs</span> <span class="selector-tag">provided</span>. <span class="selector-tag">Most</span> <span class="selector-tag">recent</span> <span class="selector-tag">failure</span>: <span class="selector-tag">org</span><span class="selector-class">.apache</span><span class="selector-class">.thrift</span><span class="selector-class">.transport</span><span class="selector-class">.TTransportException</span>: <span class="selector-tag">java</span><span class="selector-class">.net</span><span class="selector-class">.ConnectException</span>: <span class="selector-tag">Connection</span> <span class="selector-tag">refused</span>: <span class="selector-tag">connect</span></span><br><span class="line"><span class="selector-tag">Caused</span> <span class="selector-tag">by</span>: <span class="selector-tag">java</span><span class="selector-class">.net</span><span class="selector-class">.ConnectException</span>: <span class="selector-tag">Connection</span> <span class="selector-tag">refused</span>: <span class="selector-tag">connect</span></span><br></pre></td></tr></table></figure>
+<h5 id="3-2-解决方法"><a href="#3-2-解决方法" class="headerlink" title="3.2 解决方法"></a>3.2 解决方法</h5><p>这是因为远端没有启动hive造成的，启动hive时需要配置metastore。$HIVE_HOME/bin/hive –service metastore &amp;</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -208,132 +221,138 @@
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hive</a>
         		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
+        			<a href="/categories/解坑//" class="article-tag-list-link color3">解坑</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/10/17/生产Spark+Hive会遇见的拦路虎/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/" class="archive-article-date">
-  	<time datetime="2019-07-14T06:27:25.925Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-14</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/09/19/查看Azkaban数据库log日志/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">查看Azkaban数据库log日志</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/">Spark性能优化之三—ShuffleManager（SortShuffle）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/开发//" class="article-tag-list-link color3">开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-抛错-Unable-to-instantiate-SparkSession-with-Hive-support-because-Hive-classes-are-not-found"><span class="toc-number">1.</span> <span class="toc-text">1.抛错: Unable to instantiate SparkSession with Hive support because Hive classes are not found.</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-1-测试代码"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 测试代码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-2-报错"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 报错</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-查看源码"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 查看源码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-4-发现找不到HiveSessionStateBuilder"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 发现找不到HiveSessionStateBuilder</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-5-解决方法"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 解决方法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-继续报错-java-lang-NoSuchFieldError-METASTORECLIENTSOCKET-LIFETIME"><span class="toc-number">2.</span> <span class="toc-text">2.继续报错: java.lang.NoSuchFieldError: METASTORECLIENTSOCKET_LIFETIME</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-错误"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 错误</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-查看源码"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 查看源码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-3-解决方法"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 解决方法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-继续报错-Could-not-connect-to-meta-store"><span class="toc-number">3.</span> <span class="toc-text">3.继续报错: Could not connect to meta store</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-抛错"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 抛错</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-2-解决方法"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 解决方法</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/" class="archive-article-date">
-  	<time datetime="2019-07-12T19:03:58.702Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-13</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/">mac os 10.14 之后取消4位数密码限制 设置一位数密码</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Mac</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/随笔//" class="article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -356,8 +375,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
