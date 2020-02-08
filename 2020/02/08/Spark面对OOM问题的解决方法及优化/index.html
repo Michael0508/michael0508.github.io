@@ -6,23 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://micheal0508.github.io">
-  <title>Spark性能优化之三—ShuffleManager（SortShuffle） | 超悦的博客</title>
+  <title>Spark面对OOM问题的解决方法及优化 | 超悦的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！">
-<meta name="keywords" content="spark">
+  <meta name="description" content="新冠病毒的原因，相应国家的号召，这么些天了都窝在家里，人要发霉了，发个工作中经常会出现的问题来谢谢吧！！！~~~">
+<meta name="keywords" content="Spark">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spark性能优化之三—ShuffleManager（SortShuffle）">
-<meta property="og:url" content="https://micheal0508.github.io/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/index.html">
+<meta property="og:title" content="Spark面对OOM问题的解决方法及优化">
+<meta property="og:url" content="https://micheal0508.github.io/2020/02/08/Spark面对OOM问题的解决方法及优化/index.html">
 <meta property="og:site_name" content="超悦的博客">
-<meta property="og:description" content="一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！">
+<meta property="og:description" content="新冠病毒的原因，相应国家的号召，这么些天了都窝在家里，人要发霉了，发个工作中经常会出现的问题来谢谢吧！！！~~~">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://micheal0508.github.io/images/Spark_SortShuffle01.jpg">
-<meta property="og:image" content="https://micheal0508.github.io/images/Spark_SortShuffle02.jpg">
-<meta property="og:updated_time" content="2019-07-14T14:32:12.000Z">
+<meta property="og:updated_time" content="2020-02-08T06:00:57.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spark性能优化之三—ShuffleManager（SortShuffle）">
-<meta name="twitter:description" content="一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！">
-<meta name="twitter:image" content="https://micheal0508.github.io/images/Spark_SortShuffle01.jpg">
+<meta name="twitter:title" content="Spark面对OOM问题的解决方法及优化">
+<meta name="twitter:description" content="新冠病毒的原因，相应国家的号召，这么些天了都窝在家里，人要发霉了，发个工作中经常会出现的问题来谢谢吧！！！~~~">
   
     <link rel="alternative" href="/atom.xml" title="超悦的博客" type="application/atom+xml">
   
@@ -176,40 +173,63 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Spark性能优化之三—ShuffleManager（SortShuffle）" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Spark面对OOM问题的解决方法及优化" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Spark性能优化之三—ShuffleManager（SortShuffle）
+      Spark面对OOM问题的解决方法及优化
     </h1>
   
 
         
-        <a href="/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/" class="archive-article-date">
-  	<time datetime="2019-07-14T06:27:25.925Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-14</time>
+        <a href="/2020/02/08/Spark面对OOM问题的解决方法及优化/" class="archive-article-date">
+  	<time datetime="2020-02-07T21:58:24.764Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-08</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>一段时间没有更新大数据的blog了，因为这段时间忙着找工作呢！！！今天就来说说Spark的SortShuffle到底是个什么鬼！</p>
+        <p>新冠病毒的原因，相应国家的号召，这么些天了都窝在家里，人要发霉了，发个工作中经常会出现的问题来谢谢吧！！！~~~</p>
 <a id="more"></a>
-<p>事实上在这段面试的过程中，不止一次的被问到Spark的SortShuffle到底是说明，官方为什么要用SortShuffle来代替HashShuffle呢？这个blog博客我早就想写了，这是这段时间找工作比较烦懒得写了，现在要沉下新来好好看看了！！！！</p>
-<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>在Spark1.2版本之后，<strong>出现了SortShuffle，这种方式以更少的中间磁盘文件产生而远远优于HashShuffle</strong>。而它的运行机制主要分为两种。一种为普通机制，另一种为bypass机制。而bypass机制的启动条件为，当shuffle read task的数量小于等于spark.shuffle.sort.bypassMergeThreshold参数的值时（默认为200），就会启用bypass机制。即当read task不是那么多的时候，采用bypass机制是更好的选择。</p>
-<h5 id="普通运行机制"><a href="#普通运行机制" class="headerlink" title="普通运行机制"></a>普通运行机制</h5><p>在该模式下，数据会先写入一个数据结构，聚合算子写入Map，一边通过Map局部聚合，一遍写入内存。Join算子写入ArrayList直接写入内存中。然后需要判断是否达到阈值，如果达到就会将内存数据结构的数据写入到磁盘，清空内存数据结构。</p>
-<p>在溢写磁盘前，先根据key进行排序，排序过后的数据，会分批写入到磁盘文件中。默认批次为10000条，数据会以每批一万条写入到磁盘文件（flush）。写入磁盘文件通过缓冲区溢写的方式，每次溢写都会产生一个磁盘文件，也就是说一个task过程会产生多个临时文件。</p>
-<p>最后在每个task中，将所有的临时文件合并，这就是merge过程，此过程将所有临时文件读取出来，一次写入到最终文件。意味着一个task的所有数据都在这一个文件中。同时单独写一份索引文件，标识下游各个task的数据在文件中的索引，start offset和end offset。</p>
-<p>这样算来如果第一个stage 50个task，每个Executor执行一个task，那么无论下游有几个task，就需要50个磁盘文件。</p>
-<p><img src="/images/Spark_SortShuffle01.jpg" alt></p>
-<h5 id="bypass机制"><a href="#bypass机制" class="headerlink" title="bypass机制"></a>bypass机制</h5><p>bypass机制运行条件：</p>
-<p>shuffle map task数量小于spark.shuffle.sort.bypassMergeThreshold参数的值。<br>不是聚合类的shuffle算子（比如reduceByKey）。<br>在这种机制下，当前stage的task会为每个下游的task都创建临时磁盘文件。将数据按照key值进行hash，然后根据hash值，将key写入对应的磁盘文件中（个人觉得这也相当于一次另类的排序，将相同的key放在一起了）。最终，同样会将所有临时文件依次合并成一个磁盘文件，建立索引。</p>
-<p>该机制与未优化的hashshuffle相比，没有那么多磁盘文件，下游task的read操作相对性能会更好。</p>
-<p>该机制与sortshuffle的普通机制相比，在readtask不多的情况下，首先写的机制是不同，其次不会进行排序。这样就可以节约一部分性能开销。 </p>
-<p><img src="/images/Spark_SortShuffle02.jpg" alt></p>
+<h4 id="Spark中的OOM问题不外乎以下两种情况"><a href="#Spark中的OOM问题不外乎以下两种情况" class="headerlink" title="Spark中的OOM问题不外乎以下两种情况"></a>Spark中的OOM问题不外乎以下两种情况</h4><ul>
+<li>map执行中内存溢出</li>
+<li>shuffle后内存溢出</li>
+</ul>
+<p>map执行中内存溢出代表了所有map类型的操作，包括：flatMap，filter，mapPatitions等。shuffle后内存溢出的shuffle操作包括join，reduceByKey，repartition等操作。后面先总结一下我对Spark内存模型的理解，再总结各种OOM的情况相对应的解决办法和性能优化方面的总结。</p>
+<h5 id="Spark-内存模型"><a href="#Spark-内存模型" class="headerlink" title="Spark 内存模型"></a>Spark 内存模型</h5><p>Spark在一个Executor中的内存分为三块，一块是execution内存，一块是storage内存，一块是other内存</p>
+<ol>
+<li>execution内存是执行内存，文档中说join，aggregate都在这部分内存中执行，shuffle的数据也会先缓存在这个内存中，满了再写入磁盘，能够减少I/O。其实map过程也是在这个内存中执行的。</li>
+<li>storage内存是存储broadcast，cache，persist数据的地方。</li>
+<li>other内存是程序执行时预留给自己的内存。</li>
+</ol>
+<p><strong>execution和storage是Spark Executor中内存的大户，other占用内存相对少很多，这里就不说了。在spark-1.6.0以前的版本，execution和storage的内存分配是固定的，使用的参数配置分别是spark.shuffle.memoryFraction（execution内存占Executor总内存大小，default 0.2）和spark.storage.memoryFraction（storage内存占Executor内存大小，default 0.6），因为是1.6.0以前这两块内存是互相隔离的，这就导致了Executor的内存利用率不高，而且需要根据Application的具体情况，使用者自己来调节这两个参数才能优化Spark的内存使用。在spark-1.6.0以上的版本，execution内存和storage内存可以相互借用，提高了内存的Spark中内存的使用率，同时也减少了OOM的情况。</strong></p>
+<p>在Spark-1.6.0后加入了堆外内存，进一步优化了Spark的内存使用，堆外内存使用JVM堆以外的内存，不会被gc回收，可以减少频繁的full gc，所以在Spark程序中，会长时间逗留再Spark程序中的大内存对象可以使用堆外内存存储。使用堆外内存有两种方式，一种是在rdd调用persist的时候传入参数StorageLevel.OFF_HEAP，这种使用方式需要配合Tachyon一起使用。另外一种是使用Spark自带的spark.memory.offHeap.enabled 配置为true进行使用，但是这种方式在1.6.0的版本还不支持使用，只是多了这个参数，在以后的版本中会开放。</p>
+<p>OOM的问题通常出现在execution这块内存中，因为storage这块内存在存放数据满了之后，会直接丢弃内存中旧的数据，对性能有影响但是不会有OOM的问题。</p>
+<h3 id="内存溢出解决方法："><a href="#内存溢出解决方法：" class="headerlink" title="内存溢出解决方法："></a>内存溢出解决方法：</h3><h4 id="1-map过程产生大量对象导致内存溢出："><a href="#1-map过程产生大量对象导致内存溢出：" class="headerlink" title="1. map过程产生大量对象导致内存溢出："></a>1. map过程产生大量对象导致内存溢出：</h4><p>这种溢出的原因是在单个map中产生了大量的对象导致的，例如：rdd.map(x=&gt;for(i <- 1 to 10000) yield i.tostring)，这个操作在rdd中，每个对象都产生了10000个对象，这肯定很容易产生内存溢出的问题。针对这种问题，在不增加内存的情况下，可以通过减少每个task的大小，以便达到每个task即使产生大量的对象executor的内存也能够装得下。具体做法可以在会产生大量对象的map操作之前调用repartition方法，分区成更小的块传入map。例如：rdd.repartition(10000).map(x>for(i &lt;- 1 to 10000) yield i.toString)。<br>    面对这种问题注意，不能使用rdd.coalesce方法，这个方法只能减少分区，不能增加分区，不会有shuffle的过程。</-></p>
+<h4 id="2-数据不平衡导致内存溢出："><a href="#2-数据不平衡导致内存溢出：" class="headerlink" title="2.数据不平衡导致内存溢出："></a>2.数据不平衡导致内存溢出：</h4><p>数据不平衡除了有可能导致内存溢出外，也有可能导致性能的问题，解决方法和上面说的类似，就是调用repartition重新分区。这里就不再累赘了。</p>
+<h4 id="3-coalesce调用导致内存溢出："><a href="#3-coalesce调用导致内存溢出：" class="headerlink" title="3.coalesce调用导致内存溢出："></a>3.coalesce调用导致内存溢出：</h4><p>这是我最近才遇到的一个问题，因为hdfs中不适合存小问题，所以Spark计算后如果产生的文件太小，我们会调用coalesce合并文件再存入hdfs中。但是这会导致一个问题，例如在coalesce之前有100个文件，这也意味着能够有100个Task，现在调用coalesce(10)，最后只产生10个文件，因为coalesce并不是shuffle操作，这意味着coalesce并不是按照我原本想的那样先执行100个Task，再将Task的执行结果合并成10个，而是从头到位只有10个Task在执行，原本100个文件是分开执行的，现在每个Task同时一次读取10个文件，使用的内存是原来的10倍，这导致了OOM。解决这个问题的方法是令程序按照我们想的先执行100个Task再将结果合并成10个文件，这个问题同样可以通过repartition解决，调用repartition(10)，因为这就有一个shuffle的过程，shuffle前后是两个Stage，一个100个分区，一个是10个分区，就能按照我们的想法执行。</p>
+<h4 id="4-shuffle后内存溢出："><a href="#4-shuffle后内存溢出：" class="headerlink" title="4.shuffle后内存溢出："></a>4.shuffle后内存溢出：</h4><p>shuffle内存溢出的情况可以说都是shuffle后，单个文件过大导致的。在Spark中，join，reduceByKey这一类型的过程，都会有shuffle的过程，在shuffle的使用，需要传入一个partitioner，大部分Spark中的shuffle操作，默认的partitioner都是HashPatitioner，默认值是父RDD中最大的分区数,这个参数通过spark.default.parallelism控制(在spark-sql中用spark.sql.shuffle.partitions) ， spark.default.parallelism参数只对HashPartitioner有效，所以如果是别的Partitioner或者自己实现的Partitioner就不能使用spark.default.parallelism这个参数来控制shuffle的并发量了。如果是别的partitioner导致的shuffle内存溢出，就需要从partitioner的代码增加partitions的数量。</p>
+<h4 id="5-standalone模式下资源分配不均匀导致内存溢出："><a href="#5-standalone模式下资源分配不均匀导致内存溢出：" class="headerlink" title="5. standalone模式下资源分配不均匀导致内存溢出："></a>5. standalone模式下资源分配不均匀导致内存溢出：</h4><p>在standalone的模式下如果配置了–total-executor-cores 和 –executor-memory 这两个参数，但是没有配置–executor-cores这个参数的话，就有可能导致，每个Executor的memory是一样的，但是cores的数量不同，那么在cores数量多的Executor中，由于能够同时执行多个Task，就容易导致内存溢出的情况。这种情况的解决方法就是同时配置–executor-cores或者spark.executor.cores参数，确保Executor资源分配均匀。</p>
+<h4 id="6-在RDD中，共用对象能够减少OOM的情况："><a href="#6-在RDD中，共用对象能够减少OOM的情况：" class="headerlink" title="6.在RDD中，共用对象能够减少OOM的情况："></a>6.在RDD中，共用对象能够减少OOM的情况：</h4><p>这个比较特殊，这里说记录一下，遇到过一种情况，类似这样rdd.flatMap(x=&gt;for(i &lt;- 1 to 1000) yield (“key”,”value”))导致OOM，但是在同样的情况下，使用rdd.flatMap(x=&gt;for(i &lt;- 1 to 1000) yield “key”+”value”)就不会有OOM的问题，这是因为每次(“key”,”value”)都产生一个Tuple对象，而”key”+”value”，不管多少个，都只有一个对象，指向常量池。具体测试如下：</p>
+<p>这个例子说明(“key”,”value”)和(“key”,”value”)在内存中是存在不同位置的,也就是存了两份,但是”key”+”value”虽然出现了两次,但是只存了一份,在同一个地址,这用到了JVM常量池的知识.于是乎,如果RDD中有大量的重复数据,或者Array中需要存大量重复数据的时候我们都可以将重复数据转化为String,能够有效的减少内存使用.</p>
+<h4 id="优化："><a href="#优化：" class="headerlink" title="优化："></a>优化：</h4><p>这一部分主要记录一下笔者觉得有优化性能作用的一些参数配置和一些代码优化技巧，在参数优化部分，如果笔者觉得默认值是最优的了，这里就不再记录。</p>
+<h3 id="代码优化技巧："><a href="#代码优化技巧：" class="headerlink" title="代码优化技巧："></a>代码优化技巧：</h3><h4 id="1-使用mapPartitions代替大部分map操作，或者连续使用的map操作："><a href="#1-使用mapPartitions代替大部分map操作，或者连续使用的map操作：" class="headerlink" title="1.使用mapPartitions代替大部分map操作，或者连续使用的map操作："></a>1.使用mapPartitions代替大部分map操作，或者连续使用的map操作：</h4><p>这里需要稍微讲一下RDD和DataFrame的区别。RDD强调的是不可变对象，每个RDD都是不可变的，当调用RDD的map类型操作的时候，都是产生一个新的对象，这就导致了一个问题，如果对一个RDD调用大量的map类型操作的话，每个map操作会产生一个到多个RDD对象，这虽然不一定会导致内存溢出，但是会产生大量的中间数据，增加了gc操作。另外RDD在调用action操作的时候，会出发Stage的划分，但是在每个Stage内部可优化的部分是不会进行优化的，例如rdd.map(<em>+1).map(</em>+1)，这个操作在数值型RDD中是等价于rdd.map(_+2)的，但是RDD内部不会对这个过程进行优化。DataFrame则不同，DataFrame由于有类型信息所以是可变的，并且在可以使用sql的程序中，都有除了解释器外，都会有一个sql优化器，DataFrame也不例外，有一个优化器Catalyst，具体介绍看后面参考的文章。<br>上面说到的这些RDD的弊端，有一部分就可以使用mapPartitions进行优化，mapPartitions可以同时替代rdd.map,rdd.filter,rdd.flatMap的作用，所以在长操作中，可以在mapPartitons中将RDD大量的操作写在一起，避免产生大量的中间rdd对象，另外是mapPartitions在一个partition中可以复用可变类型，这也能够避免频繁的创建新对象。使用mapPartitions的弊端就是牺牲了代码的易读性。</p>
+<h4 id="2-broadcast-join和普通join："><a href="#2-broadcast-join和普通join：" class="headerlink" title="2.broadcast join和普通join："></a>2.broadcast join和普通join：</h4><pre><code>在大数据分布式系统中，大量数据的移动对性能的影响也是巨大的。基于这个思想，在两个RDD进行join操作的时候，如果其中一个RDD相对小很多，可以将小的RDD进行collect操作然后设置为broadcast变量，这样做之后，另一个RDD就可以使用map操作进行join，这样能够有效的减少相对大很多的那个RDD的数据移动。
+</code></pre><h4 id="3-先filter在join："><a href="#3-先filter在join：" class="headerlink" title="3.先filter在join："></a>3.先filter在join：</h4><pre><code>这个就是谓词下推，这个很显然，filter之后再join，shuffle的数据量会减少，这里提一点是spark-sql的优化器已经对这部分有优化了，不需要用户显示的操作，个人实现rdd的计算的时候需要注意这个。
+</code></pre><h4 id="4-combineByKey的使用："><a href="#4-combineByKey的使用：" class="headerlink" title="4.combineByKey的使用："></a>4.combineByKey的使用：</h4><p>这个操作在Map-Reduce中也有，这里举个例子：rdd.groupByKey().mapValue(_.sum)比rdd.reduceByKey的效率低，原因如下两幅图所示：</p>
+<p>上下两幅图的区别就是上面那幅有combineByKey的过程减少了shuffle的数据量，下面的没有。combineByKey是key-value型rdd自带的API，可以直接使用。</p>
+<h4 id="5-在内存不足的使用，使用rdd-persist-StorageLevel-MEMORY-AND-DISK-SER-代替rdd-cache"><a href="#5-在内存不足的使用，使用rdd-persist-StorageLevel-MEMORY-AND-DISK-SER-代替rdd-cache" class="headerlink" title="5. 在内存不足的使用，使用rdd.persist(StorageLevel.MEMORY_AND_DISK_SER)代替rdd.cache():"></a>5. 在内存不足的使用，使用rdd.persist(StorageLevel.MEMORY_AND_DISK_SER)代替rdd.cache():</h4><p>rdd.cache()和rdd.persist(Storage.MEMORY_ONLY)是等价的，在内存不足的时候rdd.cache()的数据会丢失，再次使用的时候会重算，而rdd.persist(StorageLevel.MEMORY_AND_DISK_SER)在内存不足的时候会存储在磁盘，避免重算，只是消耗点IO时间。</p>
+<h4 id="6-在spark使用hbase的时候，spark和hbase搭建在同一个集群："><a href="#6-在spark使用hbase的时候，spark和hbase搭建在同一个集群：" class="headerlink" title="6.在spark使用hbase的时候，spark和hbase搭建在同一个集群："></a>6.在spark使用hbase的时候，spark和hbase搭建在同一个集群：</h4><p>在spark结合hbase的使用中，spark和hbase最好搭建在同一个集群上上，或者spark的集群节点能够覆盖hbase的所有节点。hbase中的数据存储在HFile中，通常单个HFile都会比较大，另外Spark在读取Hbase的数据的时候，不是按照一个HFile对应一个RDD的分区，而是一个region对应一个RDD分区。所以在Spark读取Hbase的数据时，通常单个RDD都会比较大，如果不是搭建在同一个集群，数据移动会耗费很多的时间。</p>
+<h3 id="参数优化部分："><a href="#参数优化部分：" class="headerlink" title="参数优化部分："></a>参数优化部分：</h3><h4 id="7-spark-driver-memory-default-1g-："><a href="#7-spark-driver-memory-default-1g-：" class="headerlink" title="7. spark.driver.memory (default 1g)："></a>7. spark.driver.memory (default 1g)：</h4><p>这个参数用来设置Driver的内存。在Spark程序中，SparkContext，DAGScheduler都是运行在Driver端的。对应rdd的Stage切分也是在Driver端运行，如果用户自己写的程序有过多的步骤，切分出过多的Stage，这部分信息消耗的是Driver的内存，这个时候就需要调大Driver的内存。</p>
+<h4 id="8-spark-rdd-compress-default-false-："><a href="#8-spark-rdd-compress-default-false-：" class="headerlink" title="8. spark.rdd.compress (default false) ："></a>8. spark.rdd.compress (default false) ：</h4><p>这个参数在内存吃紧的时候，又需要persist数据有良好的性能，就可以设置这个参数为true，这样在使用persist(StorageLevel.MEMORY_ONLY_SER)的时候，就能够压缩内存中的rdd数据。减少内存消耗，就是在使用的时候会占用CPU的解压时间。</p>
+<h4 id="9-spark-serializer-default-org-apache-spark-serializer-JavaSerializer"><a href="#9-spark-serializer-default-org-apache-spark-serializer-JavaSerializer" class="headerlink" title="9. spark.serializer (default org.apache.spark.serializer.JavaSerializer )"></a>9. spark.serializer (default org.apache.spark.serializer.JavaSerializer )</h4><p>建议设置为 org.apache.spark.serializer.KryoSerializer，因为KryoSerializer比JavaSerializer快，但是有可能会有些Object会序列化失败，这个时候就需要显示的对序列化失败的类进行KryoSerializer的注册，这个时候要配置spark.kryo.registrator参数或者使用参照如下代码：<br>valconf=newSparkConf().setMaster(…).setAppName(…)<br>conf.registerKryoClasses(Array(classOf[MyClass1],classOf[MyClass2]))<br>valsc =newSparkContext(conf)</p>
+<h4 id="10-spark-memory-storageFraction-default-0-5"><a href="#10-spark-memory-storageFraction-default-0-5" class="headerlink" title="10. spark.memory.storageFraction (default 0.5)"></a>10. spark.memory.storageFraction (default 0.5)</h4><p>这个参数设置内存表示 Executor内存中 storage/(storage+execution)，虽然spark-1.6.0+的版本内存storage和execution的内存已经是可以互相借用的了，但是借用和赎回也是需要消耗性能的，所以如果明知道程序中storage是多是少就可以调节一下这个参数。</p>
+<h4 id="11-spark-locality-wait-default-3s-："><a href="#11-spark-locality-wait-default-3s-：" class="headerlink" title="11.spark.locality.wait (default 3s)："></a>11.spark.locality.wait (default 3s)：</h4><p>spark中有4中本地化执行level，PROCESS_LOCAL-&gt;NODE_LOCAL-&gt;RACK_LOCAL-&gt;ANY,一个task执行完，等待spark.locality.wait时间如果，第一次等待PROCESS的Task到达，如果没有，等待任务的等级下调到NODE再等待spark.locality.wait时间，依次类推，直到ANY。分布式系统是否能够很好的执行本地文件对性能的影响也是很大的。如果RDD的每个分区数据比较多，每个分区处理时间过长，就应该把 spark.locality.wait 适当调大一点，让Task能够有更多的时间等待本地数据。特别是在使用persist或者cache后，这两个操作过后，在本地机器调用内存中保存的数据效率会很高，但是如果需要跨机器传输内存中的数据，效率就会很低。</p>
+<h4 id="12-spark-speculation-default-false"><a href="#12-spark-speculation-default-false" class="headerlink" title="12. spark.speculation (default false):"></a>12. spark.speculation (default false):</h4><p>一个大的集群中，每个节点的性能会有差异，spark.speculation这个参数表示空闲的资源节点会不会尝试执行还在运行，并且运行时间过长的Task，避免单个节点运行速度过慢导致整个任务卡在一个节点上。这个参数最好设置为true。与之相配合可以一起设置的参数有spark.speculation.×开头的参数。参考中有文章详细说明这个参数。</p>
 
       
 
@@ -223,7 +243,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">spark</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
         		</li>
       		
 		</ul>
@@ -290,7 +310,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2019/07/14/Spark性能优化之三—ShuffleManager（SortShuffle）/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://micheal0508.github.io/2020/02/08/Spark面对OOM问题的解决方法及优化/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -304,18 +324,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/07/21/编写UDF的详细步骤/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          编写UDF的详细步骤
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/07/13/mac os 10.14 之后取消4位数密码限制 设置一位数密码/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">mac os 10.14 之后取消4位数密码限制 设置一位数密码</div>
+    <a href="/2019/12/26/浅谈--Kafka的精准一次语义/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">浅谈--Kafka的精准一次语义</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -342,8 +353,8 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#普通运行机制"><span class="toc-number">1.1.</span> <span class="toc-text">普通运行机制</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#bypass机制"><span class="toc-number">1.2.</span> <span class="toc-text">bypass机制</span></a></li></ol></li></ol>
-                    </div>
+                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Spark中的OOM问题不外乎以下两种情况"><span class="toc-number">1.</span> <span class="toc-text">Spark中的OOM问题不外乎以下两种情况</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Spark-内存模型"><span class="toc-number">1.1.</span> <span class="toc-text">Spark 内存模型</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#内存溢出解决方法："><span class="toc-number"></span> <span class="toc-text">内存溢出解决方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-map过程产生大量对象导致内存溢出："><span class="toc-number">1.</span> <span class="toc-text">1. map过程产生大量对象导致内存溢出：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-数据不平衡导致内存溢出："><span class="toc-number">2.</span> <span class="toc-text">2.数据不平衡导致内存溢出：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-coalesce调用导致内存溢出："><span class="toc-number">3.</span> <span class="toc-text">3.coalesce调用导致内存溢出：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-shuffle后内存溢出："><span class="toc-number">4.</span> <span class="toc-text">4.shuffle后内存溢出：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-standalone模式下资源分配不均匀导致内存溢出："><span class="toc-number">5.</span> <span class="toc-text">5. standalone模式下资源分配不均匀导致内存溢出：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-在RDD中，共用对象能够减少OOM的情况："><span class="toc-number">6.</span> <span class="toc-text">6.在RDD中，共用对象能够减少OOM的情况：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优化："><span class="toc-number">7.</span> <span class="toc-text">优化：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码优化技巧："><span class="toc-number"></span> <span class="toc-text">代码优化技巧：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-使用mapPartitions代替大部分map操作，或者连续使用的map操作："><span class="toc-number">1.</span> <span class="toc-text">1.使用mapPartitions代替大部分map操作，或者连续使用的map操作：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-broadcast-join和普通join："><span class="toc-number">2.</span> <span class="toc-text">2.broadcast join和普通join：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-先filter在join："><span class="toc-number">3.</span> <span class="toc-text">3.先filter在join：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-combineByKey的使用："><span class="toc-number">4.</span> <span class="toc-text">4.combineByKey的使用：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-在内存不足的使用，使用rdd-persist-StorageLevel-MEMORY-AND-DISK-SER-代替rdd-cache"><span class="toc-number">5.</span> <span class="toc-text">5. 在内存不足的使用，使用rdd.persist(StorageLevel.MEMORY_AND_DISK_SER)代替rdd.cache():</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-在spark使用hbase的时候，spark和hbase搭建在同一个集群："><span class="toc-number">6.</span> <span class="toc-text">6.在spark使用hbase的时候，spark和hbase搭建在同一个集群：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参数优化部分："><span class="toc-number"></span> <span class="toc-text">参数优化部分：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-spark-driver-memory-default-1g-："><span class="toc-number">1.</span> <span class="toc-text">7. spark.driver.memory (default 1g)：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-spark-rdd-compress-default-false-："><span class="toc-number">2.</span> <span class="toc-text">8. spark.rdd.compress (default false) ：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-spark-serializer-default-org-apache-spark-serializer-JavaSerializer"><span class="toc-number">3.</span> <span class="toc-text">9. spark.serializer (default org.apache.spark.serializer.JavaSerializer )</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-spark-memory-storageFraction-default-0-5"><span class="toc-number">4.</span> <span class="toc-text">10. spark.memory.storageFraction (default 0.5)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-spark-locality-wait-default-3s-："><span class="toc-number">5.</span> <span class="toc-text">11.spark.locality.wait (default 3s)：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-spark-speculation-default-false"><span class="toc-number">6.</span> <span class="toc-text">12. spark.speculation (default false):</span></a></li></ol>
+                    </li></div>
                 </span>
             </div>
         </div>
@@ -371,10 +382,10 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Michael Wang
+    		&copy; 2020 Michael Wang
     	</div>
       	<div class="footer-right">
-      		&copy; 2019  blog by 超悦
+      		&copy; 2020  blog by 超悦
       	</div>
     </div>
   </div>
@@ -458,11 +469,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Mysql</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Azkaban</a>
+                <a href="javascript:void(0)" class="js-tag color1">Shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -486,6 +493,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Azkaban</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Mysql</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
@@ -498,15 +513,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Shadowsocks</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">MapReduce</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -515,6 +522,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Spark</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Shadowsocks</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -527,6 +538,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Mac</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Kafka</a>
               </li>
              
               <li class="article-tag-list-item">
